@@ -1,15 +1,8 @@
-import os
 import pinecone
-from langchain.vectorstores import Pinecone, DeepLake
-from dotenv import load_dotenv
 import streamlit as st
+from langchain.vectorstores import Pinecone, DeepLake
 
-# load_dotenv()
-PINECONE_API_KEY = st.secrets['PINECONE_API_KEY']
-PINECONE_ENV = st.secrets['PINECONE_ENV']
-PINECONE_INDEX_NAME = st.secrets['PINECONE_INDEX_NAME']
-DEEPLAKE_USERNAME = st.secrets['DEEPLAKE_USERNAME']
-ACTIVELOOP_FILE_NAME = st.secrets['ACTIVELOOP_FILE_NAME']
+
 
 # pinecone db 임베딩 후 리턴
 # @st.cache_data()
@@ -17,10 +10,10 @@ def db_from_pinecone(docs, embeddings):
     
     # initialize pinecone
     pinecone.init(
-        api_key= PINECONE_API_KEY,
-        environment= PINECONE_ENV  
+        api_key= st.secrets["PINECONE_API_KEY"],
+        environment= st.secrets["PINECONE_ENV"]  
     )
-    index_name = PINECONE_INDEX_NAME
+    index_name = st.secrets["PINECONE_INDEX_NAME"]
     
     # pinecone vector 삭제
     index = pinecone.Index(index_name)
@@ -31,8 +24,8 @@ def db_from_pinecone(docs, embeddings):
 
 def db_from_deeplake(docs, embeddings):
     # get it from https://app.activeloop.ai/
-    user_name = DEEPLAKE_USERNAME
-    file_name = ACTIVELOOP_FILE_NAME
+    user_name = st.secrets["DEEPLAKE_USERNAME"]
+    file_name = st.secrets["ACTIVELOOP_FILE_NAME"]
     db = DeepLake.from_documents(
         docs, embeddings, dataset_path=f'hub://{user_name}/{file_name}'
     )
