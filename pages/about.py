@@ -1,5 +1,4 @@
 import streamlit as st
-import time
 
 st.set_page_config(page_title="Gitter", page_icon="🪶")
 
@@ -17,7 +16,7 @@ st.write("""
          다들 어떤 폴더에서 어떤 파일에 가야 내가 원하는 내용이 있는지를 찾았던 적이 있나요?\n
          그 과정들을 위해 폴더 하나하나, 파일 하나하나 모두 찾아봐야 했던 적이 있나요?\n\n
          """)
-st.markdown("## So What's it? 🤷")
+st.markdown("## So, what is it? 🤷")
 st.write("""
          깃-털(Gitter)는 개발자들을 위한 **GitHub 분석 및 요약 챗봇 사이트**입니다. 챗봇을 통해 GitHub 저장소에 대한 깊은 통찰력을 제공합니다. 이를 통해 프로젝트의 구조, 파일명, 코드 등의 정보들을 빠르게  파악할 수 있도록 돕습니다.
          """)
