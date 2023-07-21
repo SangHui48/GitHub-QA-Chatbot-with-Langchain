@@ -1,50 +1,23 @@
-import json
-import streamlit
-from streamlit_agraph import agraph, Node, Edge, Config
+import requests
+from PIL import Image
+from io import BytesIO
+import streamlit as st
+from pages.file_viewer import print_directory_structure
+from githubqa.get_info_from_api import get_repo_list, get_avatar_info
 
 
-def load_graph_data():
-    nodes = []
-    edges = []
-    with open("./data/marvel.json", encoding="utf8") as f:
-        marvel_file = json.loads(f.read())
-        nodes.append(
-            Node(id=marvel_file["name"],
-                 label=marvel_file["name"],
-                 shape="circularImage",
-                 image=marvel_file["img"])
-        )
-        for sub_graph in marvel_file["children"]:
-            nodes.append(Node(id=sub_graph["name"]))
-            edges.append(Edge(source=sub_graph["name"], target=marvel_file["name"], label="subgroup_of"))
-            for node in sub_graph["children"]:
-                nodes.append(Node(id=node["hero"],
-                                  title=node["link"],
-                                  shape="circularImage",
-                                  image=node["img"],
-                                  group=sub_graph["name"],
-                                  )
-                             )
-                edges.append(Edge(source=node["hero"], target=sub_graph["name"], label="blongs_to"))
-    return nodes, edges
-
-nodes, edges = load_graph_data()
-
-from streamlit_agraph.config import Config, ConfigBuilder
-
-# 1. Build the config (with sidebar to play with options) .
-config_builder = ConfigBuilder(nodes)
-config = config_builder.build()
-
-# 2. If your done, save the config to a file.
-config.save("config.json")
-
-# 3. Simple reload from json file (you can bump the builder at this point.)
-config = Config(from_json="config.json")
-
-
-return_value = agraph(nodes=nodes, 
-                      edges=edges, 
-                      config=config)
-
-
+user = st.text_input('GitHub User:', key="github_user_input")
+if user:
+    repo_list = get_repo_list(user)
+    user_info = get_avatar_info(user)
+    if repo_list:
+        specific_repo = st.selectbox(f"Select {user}'s repository", repo_list, key="repo_select")
+        avatar_url = user_info['avatar_url']
+        image_response = requests.get(avatar_url)
+        image = Image.open(BytesIO(image_response.content)).resize((250,250))
+        st.write('You selected:', specific_repo)
+        st.write(user_info)
+        st.image(image, caption=f"{user}'s profile")
+        print_directory_structure(user, specific_repo)
+    else:
+        st.error("Invalid user ID")

@@ -10,6 +10,26 @@ API_CALL_COUNT = 0
 TOTAL_INFO_DICT = {}
 ROOT = None
 
+@st.cache_data()
+def get_avatar_info(user_name):
+    # name : 닉네임 , public_repos , avatar_url
+    url = f'https://api.github.com/users/{user_name}'
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    return response.json()
+    
+@st.cache_data()
+def get_repo_list(user_name):
+    user_repos = []
+    
+    url = f'https://api.github.com/users/{user_name}/repos'
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    if response.status_code == 200:
+        for tmp_dict in response.json():
+            user_repos.append(tmp_dict['name'])
+        return user_repos
+    else:
+        return None
+
 def api_call(api_link):
     global API_CALL_COUNT
     API_CALL_COUNT += 1

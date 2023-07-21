@@ -1,10 +1,11 @@
 import tiktoken
+import streamlit as st
 from langchain.schema import Document
 from langchain.text_splitter import (
     RecursiveCharacterTextSplitter,
     Language,
 )
-import streamlit as st
+
 
 def chunking_string(all_tokens , chunking_size, overlap_size):
     tmp_idx = 0
@@ -48,10 +49,9 @@ def dictionary_to_docs(github_info_dict, structure_content, chunking_size, overl
                     )
                 tmp_docs.append(tmp_doc)
 
-            for tmp_doc in tmp_docs:
-                tmp_doc.metadata["source"] = file_name
-
-    ret_docs.extend(tmp_docs)
+        for tmp_doc in tmp_docs:
+            tmp_doc.metadata["source"] = file_name
+        ret_docs.extend(tmp_docs)
     
     structure_doc = Document(
     page_content=structure_content,
