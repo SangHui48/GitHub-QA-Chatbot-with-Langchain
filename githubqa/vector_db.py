@@ -3,9 +3,18 @@ import streamlit as st
 from langchain.vectorstores import Pinecone, DeepLake
 
 
-
+def get_just_pinecone(embeddings):
+    # initialize pinecone
+    pinecone.init(
+        api_key= st.secrets["PINECONE_API_KEY"],
+        environment= st.secrets["PINECONE_ENV"]  
+    )
+    index_name = st.secrets["PINECONE_INDEX_NAME"]
+    vectorstore = Pinecone.from_documents([], embeddings, index_name=index_name)
+    
+    return vectorstore
+    
 # pinecone db 임베딩 후 리턴
-# @st.cache_data()
 def db_from_pinecone(docs, embeddings):
     
     # initialize pinecone

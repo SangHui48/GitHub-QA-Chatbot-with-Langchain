@@ -1,10 +1,7 @@
+import os
+import base64
 import requests
 import streamlit as st
-import os
-from dotenv import load_dotenv
-import base64
-
-load_dotenv()
 
 st.set_page_config(layout="wide")
 
@@ -33,7 +30,7 @@ def print_directory_structure(user, repo, path='', depth=0):
                 print_content(item['_links']['self'], get_file_type(item['path']))
             
 def print_content(url, file_type):
-    response = requests.get(url, auth=(os.getenv("GITHUB_NAME"),os.getenv("GITHUB_TOKEN"))).json()
+    response = requests.get(url,  auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"])).json()
     content = base64.b64decode(response['content']).decode()
     with col2:
         st.code(content, language=file_type, line_numbers=True)
