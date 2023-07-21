@@ -3,7 +3,10 @@ import base64
 import requests
 import streamlit as st
 
-st.set_page_config(layout="wide")
+if 'repo_url' not in st.session_state:
+    st.session_state['repo_url'] = ""
+else:
+    repo_url  = st.session_state['repo_url']
 
 @st.cache_data()
 def get_github_content(user, repo, path=''):
@@ -48,11 +51,14 @@ def get_file_type(file_name): # 현재 .md, .py, .js만 호환
 
     return file_type
 
+st.title('`Repo Structure Visualization`')
 col1, col2 = st.columns([1,4])
+if st.session_state['repo_url']:
+    user, repo = st.session_state['repo_url'].split('/')[-2:]
+    with col1:
+        # user = st.text_input('GitHub User:')
+        # repo = st.text_input('GitHub Repo:')
 
-with col1:
-    user = st.text_input('GitHub User:')
-    repo = st.text_input('GitHub Repo:')
-
-    if user and repo:
-        print_directory_structure(user, repo)
+            print_directory_structure(user, repo)
+else:
+    st.error('Please check Username and Repository name.')
