@@ -54,11 +54,11 @@ def get_file_type(file_name): # 현재 .py, .js만 호환
 st.title('`Repo Structure Visualization`')
 col1, col2 = st.columns([1,4])
 if st.session_state['repo_url']:
+    user, repo = st.session_state['repo_url'].split('/')[-2:]
     with col1:
         # user = st.text_input('GitHub User:')
         # repo = st.text_input('GitHub Repo:')
 
-            user, repo = st.session_state['repo_url'].split('/')[-2:]
             print_directory_structure(user, repo)
 else:
     st.error('Please check Username and Repository name.')

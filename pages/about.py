@@ -1,10 +1,16 @@
 import streamlit as st
 import time
+import pandas as pd
+
+df = pd.DataFrame({
+    '직급': ['대원수 동지🇰🇵', '대좌 동지', '대좌 동지', '함경도 감자 농사꾼']
+}, index=['박원영', '김재형', '전상민', '한상희'])
 
 st.set_page_config(page_title="Gitter", page_icon="🪶")
 
 st.markdown("# 깃-털(Gitter) : “깃헙을 털다.” 🧨\n")
 st.sidebar.header("About Gitter 🪶")
+st.sidebar.dataframe(df, use_container_width=True)
 
 st.markdown('## For Whom 🧐')
 st.write("""
@@ -23,3 +29,4 @@ st.write("""
          """)
 st.markdown("\n")
 st.write("**_깃-털을 통해 GitHub의 다양한 데이터를 분석하고 요약하여, 개발자들은 더 효율적인 개발과 협업을 이룰 수 있습니다._**")
+st.image('https://i.ibb.co/VTyYLww/Kakao-Talk-20230721-140741256-07.jpg', use_column_width='always')

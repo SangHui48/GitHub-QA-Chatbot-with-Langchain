@@ -4,6 +4,11 @@ from streamlit_agraph.config import Config, ConfigBuilder
 from githubqa.get_info_from_api import github_api_call
 from anytree import RenderTree 
 
+if 'repo_url' not in st.session_state:
+    st.session_state['repo_url'] = ""
+else:
+    repo_url  = st.session_state['repo_url']
+
 # 이미지 온라인 링크 호스팅 : https://imgbb.com/ # 여기서 집어넣으면 댐
 # 폴더 이미지 링크: https://i.ibb.co/9YC64Y4/folder.png
 # Github Root 링크 : https://i.ibb.co/8MN42Hb/root.png
@@ -69,22 +74,24 @@ def load_graph_data(github_link):
 
     return nodes, edges
 
-visualize_github_link = st.text_input("Github repository link을 입력해주세요")
+# visualize_github_link = st.text_input("Github repository link을 입력해주세요")
 
-if visualize_github_link:
+if repo_url:
     nodes, edges = [], [] 
-    nodes, edges = load_graph_data(visualize_github_link)
+    nodes, edges = load_graph_data(repo_url)
 
-# 1. Build the config (with sidebar to play with options) .
-config_builder = ConfigBuilder(nodes)
-config = config_builder.build()
+    # 1. Build the config (with sidebar to play with options) .
+    config_builder = ConfigBuilder(nodes)
+    config = config_builder.build()
 
-# 2. If your done, save the config to a file.
-config.save("config.json")
+    # 2. If your done, save the config to a file.
+    config.save("config.json")
 
-# 3. Simple reload from json file (you can bump the builder at this point.)
-config = Config(from_json="config.json")
+    # 3. Simple reload from json file (you can bump the builder at this point.)
+    config = Config(from_json="config.json")
 
-agraph(nodes=nodes, 
-        edges=edges, 
-        config=config)
+    agraph(nodes=nodes, 
+            edges=edges, 
+            config=config)
+else:
+    st.error('Github repository를 선택해주세요.')

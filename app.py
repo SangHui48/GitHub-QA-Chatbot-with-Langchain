@@ -45,29 +45,38 @@ def main():
     if "messages" not in st.session_state:
         st.session_state.messages = []
     
+    if "isChange" not in st.session_state:
+        st.session_state.isChange = False
+    
     if st.session_state['repo_url']:
+        with st.spinner('레포지터리 분석중...'):
+            # 2. 모든 데이터 "File_name" : "File_content" 형식 받아오기
+            github_info_dict, structure_content, _ = github_api_call(st.session_state['repo_url'])
+            st.session_state.isChange = True
+            # print(github_info_dict)
+        # 3. "File_content 형식 데이터" 청킹 갯수 단위로 자른후에 리스트로 변환하기
+        # 반환값 [Doc1, Doc2 ...]
+        with st.spinner('임베딩중...'):
+            print(len(github_info_dict.keys()))
+            docs = dictionary_to_docs(
+                github_info_dict, structure_content,
+                chunking_size=1000, overlap_size=0, 
+                model_name=MODEL_NAME
+            )
+            # 4. chunking 된 데이터 vector db 로 임베딩 하기 
+            # 임베딩 모델 및 vector db 반환 
+            embedding_model = OpenAIEmbeddings(model='text-embedding-ada-002')
         if 'vector_db' not in st.session_state: 
-            with st.spinner('레포지터리 분석중...'):
-                # 2. 모든 데이터 "File_name" : "File_content" 형식 받아오기
-                github_info_dict, structure_content, _ = github_api_call(st.session_state['repo_url'])
-                # print(github_info_dict)
-            # 3. "File_content 형식 데이터" 청킹 갯수 단위로 자른후에 리스트로 변환하기
-            # 반환값 [Doc1, Doc2 ...]
-            with st.spinner('임베딩중...'):
-                print(len(github_info_dict.keys()))
-                docs = dictionary_to_docs(
-                    github_info_dict, structure_content,
-                    chunking_size=1000, overlap_size=0, 
-                    model_name=MODEL_NAME
-                )
-                # 4. chunking 된 데이터 vector db 로 임베딩 하기 
-                # 임베딩 모델 및 vector db 반환 
-                embedding_model = OpenAIEmbeddings(model='text-embedding-ada-002')
                 # vector_db = db_from_deeplake(docs, embedding_model)
                 vector_db = db_from_pinecone(docs, embedding_model)
                 st.session_state['vector_db'] = vector_db
         else:
-            vector_db =  st.session_state['vector_db']
+            if st.session_state.isChange:
+                vector_db = db_from_pinecone(docs, embedding_model)
+                st.session_state['vector_db'] = vector_db
+                st.session_state.isChange = False
+            else:
+                vector_db =  st.session_state['vector_db']
         # 5. QA 를 위한 retriever 및 qa 세팅 하기
         retriever =  mmr_retriever_setting(
             vectorstore=vector_db, 
