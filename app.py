@@ -1,39 +1,55 @@
 import time
+from PIL import Image
+from io import BytesIO
+import requests
 import streamlit as st
 from githubqa.vector_db import *
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from githubqa.get_info_from_api import github_api_call
+from githubqa.get_info_from_api import get_avatar_info, get_repo_list, github_api_call
 from githubqa.data_processing import dictionary_to_docs
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
-from streamlit_extras.add_vertical_space import add_vertical_space
 
+if "repo_url" not in st.session_state:
+    st.session_state['repo_url'] = ""
 
 # Sidebar contents
-with st.sidebar:
-    st.set_page_config(page_title = "This is a Multipage WebApp")
-    st.title('🤗💬 LLM Chat App')
-    add_vertical_space(5)
-    st.write('Made with  by [오미자차](https://github.com/SangHui48/KDT_AI_B3)')
-    
+st.sidebar.title('`Gitter`:feather:')
+github_user = st.sidebar.text_input("`Github User ID:`")
+if github_user:
+    repo_list = get_repo_list(github_user)
+    user_info = get_avatar_info(github_user)
+    if repo_list:
+        specific_repo = st.sidebar.selectbox(f"Select {github_user}'s repository", repo_list, key="repo_select")
+        avatar_url = user_info['avatar_url']
+        image_response = requests.get(avatar_url)
+        image = Image.open(BytesIO(image_response.content)).resize((250,250))
+        st.sidebar.success(f'`You selected:{specific_repo}`')
+        # st.sidebar.write(user_info)
+        st.sidebar.image(image, use_column_width='always', caption=f"{github_user}'s profile")
+        st.session_state['repo_url'] = f"https://github.com/{github_user}/{specific_repo}"
+    else:
+        st.error("Invalid user ID")
+
+st.sidebar.info('Made with  by [오미자차](https://github.com/SangHui48/KDT_AI_B3)')
 
 def main():
     MODEL_NAME = "gpt-3.5-turbo-16k" # langchain llm config
 
-    st.header("Gitter :feather:")
+    st.header("`Chatbot`")
 
     # user input github repo url
-    github_link = st.text_input("Github repository link을 입력해주세요")
+    # github_link = st.text_input("Github repository link을 입력해주세요")
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
     
-    if github_link:
+    if st.session_state['repo_url']:
         if 'vector_db' not in st.session_state: 
             with st.spinner('레포지터리 분석중...'):
                 # 2. 모든 데이터 "File_name" : "File_content" 형식 받아오기
-                github_info_dict, structure_content, _ = github_api_call(github_link)
+                github_info_dict, structure_content, _ = github_api_call(st.session_state['repo_url'])
                 # print(github_info_dict)
             # 3. "File_content 형식 데이터" 청킹 갯수 단위로 자른후에 리스트로 변환하기
             # 반환값 [Doc1, Doc2 ...]
@@ -113,6 +129,7 @@ def main():
         #                     # Add a blinking cursor to simulate typing
         #                     message_placeholder.markdown(full_response + "▌")
         #                 message_placeholder.markdown(full_response)
-
+    else:
+        st.error('Please check Username and Repository name.')
 if __name__ == '__main__':
     main()
