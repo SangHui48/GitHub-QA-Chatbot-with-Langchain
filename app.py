@@ -11,8 +11,10 @@ from githubqa.data_processing import dictionary_to_docs
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 
+DEFAULT_SELECT_VALUE = "Select Repo"
 if "repo_url" not in st.session_state:
     st.session_state['repo_url'] = ""
+
 
 # Sidebar contents
 st.sidebar.title('`Gitter`:feather:')
@@ -21,14 +23,16 @@ if github_user:
     repo_list = get_repo_list(github_user)
     user_info = get_avatar_info(github_user)
     if repo_list:
+        repo_list = [DEFAULT_SELECT_VALUE] + repo_list
         specific_repo = st.sidebar.selectbox(f"Select {github_user}'s repository", repo_list, key="repo_select")
-        avatar_url = user_info['avatar_url']
-        image_response = requests.get(avatar_url)
-        image = Image.open(BytesIO(image_response.content)).resize((250,250))
-        st.sidebar.success(f'`You selected:{specific_repo}`')
-        # st.sidebar.write(user_info)
-        st.sidebar.image(image, use_column_width='always', caption=f"{github_user}'s profile")
-        st.session_state['repo_url'] = f"https://github.com/{github_user}/{specific_repo}"
+        if specific_repo != DEFAULT_SELECT_VALUE:
+            avatar_url = user_info['avatar_url']
+            image_response = requests.get(avatar_url)
+            image = Image.open(BytesIO(image_response.content)).resize((250,250))
+            st.sidebar.success(f'`You selected:{specific_repo}`')
+            # st.sidebar.write(user_info)
+            st.sidebar.image(image, use_column_width='always', caption=f"{github_user}'s profile")
+            st.session_state['repo_url'] = f"https://github.com/{github_user}/{specific_repo}"
     else:
         st.error("Invalid user ID")
 
@@ -57,7 +61,6 @@ def main():
         # 3. "File_content 형식 데이터" 청킹 갯수 단위로 자른후에 리스트로 변환하기
         # 반환값 [Doc1, Doc2 ...]
         with st.spinner('임베딩중...'):
-            print(len(github_info_dict.keys()))
             docs = dictionary_to_docs(
                 github_info_dict, structure_content,
                 chunking_size=1000, overlap_size=0, 
@@ -139,6 +142,6 @@ def main():
         #                     message_placeholder.markdown(full_response + "▌")
         #                 message_placeholder.markdown(full_response)
     else:
-        st.error('Please check Username and Repository name.')
+        st.info('Please write your github name to the left side bar')
 if __name__ == '__main__':
     main()
