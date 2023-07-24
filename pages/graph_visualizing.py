@@ -1,13 +1,10 @@
 import streamlit as st
+from anytree import RenderTree 
 from streamlit_agraph import agraph, Node, Edge, Config
 from streamlit_agraph.config import Config, ConfigBuilder
-from githubqa.get_info_from_api import github_api_call
-from anytree import RenderTree 
+from githubqa.get_info_from_api import github_api_call, get_repo_list
 
-if 'repo_url' not in st.session_state:
-    st.session_state['repo_url'] = ""
-else:
-    repo_url  = st.session_state['repo_url']
+DEFAULT_SELECT_VALUE = "Select Repo"
 
 # 이미지 온라인 링크 호스팅 : https://imgbb.com/ # 여기서 집어넣으면 댐
 # 폴더 이미지 링크: https://i.ibb.co/9YC64Y4/folder.png
@@ -18,8 +15,13 @@ file_image_dict = {
     "txt" : "https://i.ibb.co/23mfJx3/txt.png",
     "ipynb": "https://i.ibb.co/nQ8yPfh/ipynb.png"
 }
-
 nodes, edges = [], []
+
+def change_control_selectbox(your_input):
+    print(your_input)
+
+def change_control_username_input(input):
+    print("hello")
 
 def load_graph_data(github_link):
     global file_image_dict, nodes, edges
@@ -29,11 +31,13 @@ def load_graph_data(github_link):
     _, _ ,root = github_api_call(github_link)
 
     for _, _, tmp_node in RenderTree(root):
-        file_name = github_link.split('/')[-1]
-        # print(tmp_node.name)
-        if tmp_node.name == root.name:
+        file_path = tmp_node.name
+        file_name = tmp_node.name.split('/')[-1]
+        node_id = tmp_node.name
+
+        if root.name == tmp_node.name:
             nodes.append(
-                Node(id=tmp_node.name,
+                Node(id=file_path,
                     label=file_name,
                     title=file_name,
                     shape="circularImage",
@@ -43,25 +47,27 @@ def load_graph_data(github_link):
                     # color="#FF0000", 
                     )
                 )
-        elif "." in tmp_node.name or tmp_node.name=="LICENSE":  
-            if tmp_node.name == "LICENSE":
+        elif "." in file_name or file_name=="LICENSE":  
+            if file_name == "LICENSE":
                 extension_name = ""
             else:
-                extension_name = tmp_node.name.split(".")[1]
+                extension_name = file_name.split(".")[1]
             image_link = "https://i.ibb.co/T0jg7QZ/file.png"
             if extension_name in file_image_dict:
                  image_link = file_image_dict[extension_name]
             nodes.append(
-                Node(id=tmp_node.name,
-                    label=tmp_node.name,
+                Node(
+                    id=file_path,
+                    label=file_name,
                     shape="circularImage",
                     image=image_link,
                     )
                 )
         else:
             nodes.append(
-                Node(id=tmp_node.name,
-                    label=tmp_node.name,
+                Node(
+                    id=file_path,
+                    label=file_name,
                     shape="circularImage",
                     image="https://i.ibb.co/9YC64Y4/folder.png"
                     )
@@ -74,11 +80,40 @@ def load_graph_data(github_link):
 
     return nodes, edges
 
-# visualize_github_link = st.text_input("Github repository link을 입력해주세요")
 
-if repo_url:
+# visualize_github_link = st.text_input("Github repository link을 입력해주세요")
+if 'repo_url' not in st.session_state:
+    user = st.text_input('GitHub User:', key="github_user_input")
+    if user:
+        repo_list = get_repo_list(user)
+        if repo_list:
+            repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
+            specific_repo = st.selectbox(
+                f"Select {user}'s repository", 
+                repo_list, 
+                key="repo_select",
+                # on_change=change_control_selectbox
+            )
+            if specific_repo != DEFAULT_SELECT_VALUE:
+                st.session_state['repo_url'] = f"https://github.com/{user}/{specific_repo}"
+        else:
+            st.error("Invalid user ID")
+else:
+    print(st.session_state['repo_url'])
+    user_name, repo_name = st.session_state['repo_url'].split('/')[-2:]
+    repo_list = [DEFAULT_SELECT_VALUE] + get_repo_list(user_name)
+    user = st.text_input('GitHub User:', key="github_user_input")
+    repo_list = [DEFAULT_SELECT_VALUE] + get_repo_list(user)
+    specific_repo = st.selectbox(
+            f"Select {user}'s repository", 
+            repo_list, 
+            key="repo_select"
+        )
+
+
+if 'repo_url' in st.session_state:
     nodes, edges = [], [] 
-    nodes, edges = load_graph_data(repo_url)
+    nodes, edges = load_graph_data(st.session_state['repo_url'])
 
     # 1. Build the config (with sidebar to play with options) .
     config_builder = ConfigBuilder(nodes)
@@ -94,4 +129,4 @@ if repo_url:
             edges=edges, 
             config=config)
 else:
-    st.error('Github repository를 선택해주세요.')
+    st.info('Github 정보를 입력해주세요.')

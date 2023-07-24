@@ -38,7 +38,7 @@ def print_content(url, file_type):
     with col2:
         st.code(content, language=file_type, line_numbers=True)
 
-def get_file_type(file_name): # 현재 .py, .js만 호환
+def get_file_type(file_name): # 현재 .md, .py, .js만 호환
     # https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_LANGUAGES_PRISM.MD
     if file_name.endswith(".md"):
         file_type = "markdown"
