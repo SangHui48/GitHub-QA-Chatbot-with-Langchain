@@ -23,15 +23,13 @@ def get_avatar_info(user_name):
 @st.cache_data()
 def get_repo_list(user_name):
     user_repos = []
-    html_repos = []
     
     url = f'https://api.github.com/users/{user_name}/repos'
     response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict['name'])
-            html_repos.append(tmp_dict['html_url'])
-        return user_repos, html_repos
+        return user_repos
     else:
         return None
 
@@ -213,5 +211,19 @@ def get_commits(user_name,repo_name):
         for tmp_dict in response.json():
             user_repos.append(tmp_dict)
         return user_repos
+    else:
+        return None
+    
+
+@st.cache_data()
+def get_url_list(user_name):
+    url_repos = []
+    
+    url = f'https://api.github.com/users/{user_name}/repos'
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    if response.status_code == 200:
+        for tmp_dict in response.json():
+            url_repos.append(tmp_dict['html_url'])
+        return url_repos
     else:
         return None

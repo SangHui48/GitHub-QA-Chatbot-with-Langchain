@@ -85,7 +85,7 @@ def load_graph_data(github_link):
 if 'repo_url' not in st.session_state:
     user = st.text_input('GitHub User:', key="github_user_input")
     if user:
-        repo_list = get_repo_list(user)[0]
+        repo_list = get_repo_list(user)
         if repo_list:
             repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
             specific_repo = st.selectbox(
@@ -101,9 +101,9 @@ if 'repo_url' not in st.session_state:
 else:
     print(st.session_state['repo_url'])
     user_name, repo_name = st.session_state['repo_url'].split('/')[-2:]
-    repo_list = [DEFAULT_SELECT_VALUE] + get_repo_list(user_name)[0]
+    repo_list = [DEFAULT_SELECT_VALUE] + get_repo_list(user_name)
     user = st.text_input('GitHub User:', key="github_user_input")
-    repo_list = [DEFAULT_SELECT_VALUE] + get_repo_list(user)[0]
+    repo_list = [DEFAULT_SELECT_VALUE] + get_repo_list(user)
     specific_repo = st.selectbox(
             f"Select {user}'s repository", 
             repo_list, 

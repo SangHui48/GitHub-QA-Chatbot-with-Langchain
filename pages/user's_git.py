@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from pages.file_viewer import print_directory_structure
 from githubqa.get_info_from_api import get_repo_list, get_avatar_info
-from githubqa.get_info_from_api import get_language_list, get_contributors, get_forks, get_followers, get_stars, get_commits
+from githubqa.get_info_from_api import get_language_list, get_contributors, get_forks, get_followers, get_stars, get_commits, get_url_list
 
 user = st.text_input('GitHub User:', key="github_user_input")
 if user:
@@ -18,7 +18,7 @@ if user:
         {
             "avartar": avatar_url,
             "e-mail": user_info['email'],
-            "total repos": len(repo_list[0]),
+            "total repos": len(repo_list),
             "followers": [followers_name],
         }
     )
@@ -36,15 +36,16 @@ if user:
     )
 
     if repo_list:
-        specific_repo = st.selectbox(f"Select {user}'s repository", repo_list[0], key="repo_select")
+        specific_repo = st.selectbox(f"Select {user}'s repository", repo_list, key="repo_select")
 
         
         # ======= All Repo Info Table ========
-        repo_name = [repo for repo in repo_list[0]]
+        repo_name = [repo for repo in repo_list]
         languages = [get_language_list(user, repo) for repo in repo_name]
         contributors = [get_contributors(user, repo)[0] for repo in repo_name]
         forks = [get_forks(user, repo) for repo in repo_name]
         stars = [get_stars(user, repo) for repo in repo_name]
+        repo_url = [url for url in get_url_list(user)]
         
         # 날짜 별 commits 흐름
         commits = [get_commits(user, repo) for repo in repo_name]
@@ -61,7 +62,7 @@ if user:
         df = pd.DataFrame(
             {
                 "name": repo_name,
-                "url": [repo for repo in repo_list[1]],
+                "url": repo_url,
                 "stars": stars,
                 "views_history": [[commit[1] for commit in commits] for commits in commit_list],
                 "contributers": contributors,
