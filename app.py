@@ -20,7 +20,8 @@ if "repo_url" not in st.session_state:
 st.sidebar.title('`Gitter`:feather:')
 github_user = st.sidebar.text_input("`Github User ID:`")
 if github_user:
-    repo_list = get_repo_list(github_user)
+    repo_list = get_repo_list(github_user)[0]
+    print(repo_list)
     user_info = get_avatar_info(github_user)
     if repo_list:
         repo_list = [DEFAULT_SELECT_VALUE] + repo_list
