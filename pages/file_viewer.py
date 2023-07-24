@@ -23,6 +23,7 @@ def print_content(url, file_type):
     
 
 
+
 st.session_state["user_name"] = st.text_input(
     'GitHub User:',  key="github_user_input", 
     value=st.session_state["user_name"],
@@ -42,6 +43,7 @@ if st.session_state["user_name"]:
             st.session_state["repo_url"] = f"https://github.com/{st.session_state['user_name']}/{st.session_state['repo_name']}"
     else:
         st.error("Invalid user ID")
+
 
 
 def print_directory_structure(user, repo, path='', depth=0):
