@@ -1,18 +1,31 @@
-import streamlit as st
 import pandas as pd
+from common import *
+import streamlit as st
 from pages.file_viewer import print_directory_structure
-from githubqa.get_info_from_api import get_repo_list, get_avatar_info
-from githubqa.get_info_from_api import get_language_list, get_contributors, get_forks, get_followers, get_stars, get_commits, get_url_list
+from githubqa.get_info_from_api import (
+    get_repo_list, get_avatar_info,
+    get_language_list, get_contributors,
+    get_forks, get_followers,
+    get_stars, get_commits, get_url_list
+)
 
-user = st.text_input('GitHub User:', key="github_user_input")
-if user:
-    repo_list = get_repo_list(user)
-    user_info = get_avatar_info(user)
+initialize_session()
+
+st.session_state["user_name"] = st.text_input(
+    'GitHub User:',  key="github_user_input", 
+    value=st.session_state["user_name"],
+    on_change=handling_user_change
+    )
+
+if st.session_state["user_name"]:
+    user_name = st.session_state["user_name"]
+    repo_list = get_repo_list(user_name)
+    user_info = get_avatar_info(user_name)
     avatar_url = user_info['avatar_url']+'.png'
 
     # ======= User Info Table ========
-    followers_name = get_followers(user)[0]
-    followers_url = get_followers(user)[1]
+    followers_name = get_followers(user_name)[0]
+    followers_url = get_followers(user_name)[1]
 
     df = pd.DataFrame(
         {
@@ -36,19 +49,23 @@ if user:
     )
 
     if repo_list:
-        specific_repo = st.selectbox(f"Select {user}'s repository", repo_list, key="repo_select")
+        repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
+        st.session_state["repo_name"] = st.selectbox(
+                f"Select {user_name}'s repository", repo_list, 
+                key="repo_select",
+                index=repo_list.index(st.session_state["repo_name"]),
+            )
 
-        
         # ======= All Repo Info Table ========
-        repo_name = [repo for repo in repo_list]
-        languages = [get_language_list(user, repo) for repo in repo_name]
-        contributors = [get_contributors(user, repo)[0] for repo in repo_name]
-        forks = [get_forks(user, repo) for repo in repo_name]
-        stars = [get_stars(user, repo) for repo in repo_name]
-        repo_url = [url for url in get_url_list(user)]
+        repo_name = [repo for repo  in repo_list if repo !=DEFAULT_SELECT_VALUE]
+        languages = [get_language_list(user_name, repo) for repo in repo_name]
+        contributors = [get_contributors(user_name, repo)[0] for repo in repo_name]
+        forks = [get_forks(user_name, repo) for repo in repo_name]
+        stars = [get_stars(user_name, repo) for repo in repo_name]
+        repo_url = [url for url in get_url_list(user_name)]
         
         # 날짜 별 commits 흐름
-        commits = [get_commits(user, repo) for repo in repo_name]
+        commits = [get_commits(user_name, repo) for repo in repo_name]
         commit_list = []
         for i in range(len(commits)):
             commits_dict={}
@@ -90,6 +107,8 @@ if user:
         )
 
         # ===================
-        print_directory_structure(user, specific_repo)
+        if st.session_state["repo_name"] != DEFAULT_SELECT_VALUE:
+            st.session_state["repo_url"] = f"https://github.com/{st.session_state['user_name']}/{st.session_state['repo_name']}"
+            print_directory_structure(user_name, st.session_state["repo_name"])
     else:
         st.error("Invalid user ID")
