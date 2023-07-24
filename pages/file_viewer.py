@@ -11,7 +11,7 @@ else:
 @st.cache_data()
 def get_github_content(user, repo, path=''):
     url = f'https://api.github.com/repos/{user}/{repo}/contents/{path}'
-    response = requests.get(url, auth=(os.getenv("GITHUB_NAME"),os.getenv("GITHUB_TOKEN")))
+    response = requests.get(url, auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
     return response.json()
 
 def print_directory_structure(user, repo, path='', depth=0):
