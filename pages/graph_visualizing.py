@@ -10,6 +10,8 @@ from githubqa.get_info_from_api import github_api_call, get_repo_list
 # Github root link : https://i.ibb.co/8MN42Hb/root.png
 
 initialize_session()
+buy_me_tea()
+
 file_image_dict = {
     "py" : "https://i.ibb.co/HD532QV/py.png",
     "pdf" : "https://i.ibb.co/Gkptk9q/pdf.png",

@@ -10,6 +10,7 @@ from githubqa.get_info_from_api import (
 )
 
 initialize_session()
+buy_me_tea()
 
 st.title('`Search User\'s Repo`')
 
@@ -42,7 +43,6 @@ if st.session_state["user_name"]:
             }
         )
         
-        
         st.dataframe(
             df,
             column_config={
@@ -55,8 +55,6 @@ if st.session_state["user_name"]:
         )
 
         if repo_list:
-            
-
             # ======= All Repo Info Table ========
             st.subheader("User's Repositories")
             repo_name = [repo for repo  in repo_list if repo !=DEFAULT_SELECT_VALUE]
