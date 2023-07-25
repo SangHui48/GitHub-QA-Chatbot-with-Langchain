@@ -10,12 +10,35 @@ from githubqa.get_info_from_api import github_api_call, get_repo_list
 # Github root link : https://i.ibb.co/8MN42Hb/root.png
 
 initialize_session()
-file_image_dict = {
-    "py" : "https://i.ibb.co/HD532QV/py.png",
-    "pdf" : "https://i.ibb.co/Gkptk9q/pdf.png",
-    "txt" : "https://i.ibb.co/23mfJx3/txt.png",
-    "ipynb": "https://i.ibb.co/nQ8yPfh/ipynb.png"
+
+## Get file icons
+# https://github.com/PKief/vscode-material-icon-theme/tree/main#file-icons
+file_image_dict = { # 추가 중. 정렬 아직 안함.
+    "py" : "python",
+    "pdf" : "pdf",
+    "txt" : "text",
+    "dir" : "folder-resource",
+    "file" : "lib",
+    "root" : "git",
+    "ipynb": "python-misc",
+    "exe" : "exe",
+    "jpg" : "image",
+    "jpeg" : "image",
+    "png" : "image",
+    "mp4" : "video",
+    "zip" : "zip",
+    "txt" : "text",
+    "md" : "markdown",
+    "txt" : "document",
+    
 }
+def get_file_icon_url(file_extension):
+    if file_extension in file_image_dict:
+        return f"https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/icons/{file_image_dict[file_extension.lower()]}.svg"
+    else:
+        return ""
+
+
 nodes, edges = [], []
 
 def load_graph_data(github_link):
@@ -35,10 +58,10 @@ def load_graph_data(github_link):
                     label=file_name,
                     title=file_name,
                     shape="circularImage",
-                    image="https://i.ibb.co/8MN42Hb/root.png",
+                    image=get_file_icon_url('root'),
                     link=github_link,
-                    # size=100, # 이런 식으로 수정하면 됨.
-                    # color="#FF0000", 
+                    size=30, # 이런 식으로 수정하면 됨.
+                    color="#FFFFFF", 
                     )
                 )
         elif "." in file_name or file_name=="LICENSE":  
@@ -46,15 +69,16 @@ def load_graph_data(github_link):
                 extension_name = ""
             else:
                 extension_name = file_name.split(".")[1]
-            image_link = "https://i.ibb.co/T0jg7QZ/file.png"
+            image_link = get_file_icon_url('file')
             if extension_name in file_image_dict:
-                 image_link = file_image_dict[extension_name]
+                image_link = get_file_icon_url(extension_name)
             nodes.append(
                 Node(
                     id=file_path,
                     label=file_name,
                     shape="circularImage",
                     image=image_link,
+                    color = "#FFFFFF",
                     )
                 )
         else:
@@ -63,7 +87,8 @@ def load_graph_data(github_link):
                     id=file_path,
                     label=file_name,
                     shape="circularImage",
-                    image="https://i.ibb.co/9YC64Y4/folder.png"
+                    image=get_file_icon_url('dir'),
+                    color = "#FFFFFF",
                     )
                 )  
         
@@ -109,6 +134,11 @@ if st.session_state['repo_url'] != "":
 
     # 3. Simple reload from json file (you can bump the builder at this point.)
     config = Config(from_json="config.json")
+    # config.physics = True
+    # config.hierarchical = False # True가 이상하게 안됨.
+    # config.width = 1000
+    # config.height = 1000
+    
 
     agraph(nodes=nodes, 
             edges=edges, 
