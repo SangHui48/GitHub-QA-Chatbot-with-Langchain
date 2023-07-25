@@ -1,18 +1,50 @@
-import os
 import base64
 import requests
+from common import *
 import streamlit as st
+from githubqa.get_info_from_api import get_github_content
 
-if 'repo_url' not in st.session_state:
-    st.session_state['repo_url'] = ""
-else:
-    repo_url  = st.session_state['repo_url']
+initialize_session()
 
-@st.cache_data()
-def get_github_content(user, repo, path=''):
-    url = f'https://api.github.com/repos/{user}/{repo}/contents/{path}'
-    response = requests.get(url, auth=(os.getenv("GITHUB_NAME"),os.getenv("GITHUB_TOKEN")))
-    return response.json()
+file_type_dictionary = {
+    ".md" : "markdown",
+    ".py" : "python",
+    ".js" : "javascript"
+}
+
+def print_content(url, file_type):
+    response = requests.get(url,  auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"])).json()
+    try:
+        content = base64.b64decode(response['content']).decode('utf-8')
+        with col2:
+            st.code(content, language=file_type, line_numbers=True)
+    except:
+        st.code("Cannot read this file_content", language="markdown", line_numbers=True)
+    
+
+
+
+st.session_state["user_name"] = st.text_input(
+    'GitHub User:',  key="github_user_input", 
+    value=st.session_state["user_name"],
+    on_change=handling_user_change
+    )
+if st.session_state["user_name"]:
+    user = st.session_state["user_name"]
+    repo_list = get_repo_list(user)
+    if repo_list:
+        repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
+        st.session_state["repo_name"] = st.selectbox(
+                f"Select {user}'s repository", repo_list, 
+                key="repo_select",
+                index=repo_list.index(st.session_state["repo_name"]),
+            )
+        if st.session_state["repo_name"] != DEFAULT_SELECT_VALUE:
+            st.session_state["repo_url"] = f"https://github.com/{st.session_state['user_name']}/{st.session_state['repo_name']}"
+    else:
+        st.error("Invalid user ID")
+
+
 
 def print_directory_structure(user, repo, path='', depth=0):
     contents = get_github_content(user, repo, path)
@@ -32,33 +64,21 @@ def print_directory_structure(user, repo, path='', depth=0):
             if st.button(item['path']):
                 print_content(item['_links']['self'], get_file_type(item['path']))
             
-def print_content(url, file_type):
-    response = requests.get(url,  auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"])).json()
-    content = base64.b64decode(response['content']).decode()
-    with col2:
-        st.code(content, language=file_type, line_numbers=True)
+
 
 def get_file_type(file_name): # 현재 .md, .py, .js만 호환
     # https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_LANGUAGES_PRISM.MD
-    if file_name.endswith(".md"):
-        file_type = "markdown"
-    elif file_name.endswith(".py"):
-        file_type = "python"
-    elif file_name.endswith(".js"):
-        file_type = "javascript"
+    extension_name = "." + file_name.split(".")[-1]
+    if extension_name in file_type_dictionary:
+        return file_type_dictionary[extension_name]
     else:
-        file_type = None
-
-    return file_type
-
+        return None
+    
 st.title('`Repo Structure Visualization`')
 col1, col2 = st.columns([1,4])
 if st.session_state['repo_url']:
     user, repo = st.session_state['repo_url'].split('/')[-2:]
     with col1:
-        # user = st.text_input('GitHub User:')
-        # repo = st.text_input('GitHub Repo:')
-
-            print_directory_structure(user, repo)
+        print_directory_structure(user, repo)
 else:
-    st.error('Please check Username and Repository name.')
+    st.info('Please insert your name and repo_name')
