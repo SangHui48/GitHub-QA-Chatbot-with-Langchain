@@ -12,8 +12,9 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from githubqa.get_info_from_api import get_avatar_info, get_repo_list, github_api_call
 
-# 1. Session Initialize 
+# 1. Session Initialize & Donation
 initialize_session()
+buy_me_tea()
 
 # 2. Sidebar username input
 st.sidebar.title('`Gitter`:feather:')

@@ -5,6 +5,7 @@ import streamlit as st
 from githubqa.get_info_from_api import get_github_content
 
 initialize_session()
+buy_me_tea()
 
 file_type_dictionary = {
     ".md" : "markdown",

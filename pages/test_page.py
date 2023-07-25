@@ -6,6 +6,7 @@ import streamlit as st
 from githubqa.get_info_from_api import get_repo_list, get_avatar_info
 
 initialize_session()
+buy_me_tea()
 
 st.session_state["user_name"] = st.text_input(
     'GitHub User:',  key="github_user_input", 
