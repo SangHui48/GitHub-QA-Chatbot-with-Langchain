@@ -34,7 +34,7 @@ if st.session_state["user_name"]:
     st.subheader("User Info")
     followers_name = get_followers(user_name)[0]
     followers_url = get_followers(user_name)[1]
-    print([repo for repo in repo_list])
+    # print([repo for repo in repo_list])
     df = pd.DataFrame(
         {
             "avartar": avatar_url,
