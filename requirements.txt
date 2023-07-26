@@ -67,7 +67,6 @@ marshmallow-enum==1.5.1
 matplotlib==3.7.2
 matplotlib-inline==0.1.6
 mdurl==0.1.2
-menuinst==1.4.19
 more-itertools==9.1.0
 multidict==6.0.4
 mypy-extensions==1.0.0
