@@ -115,4 +115,4 @@ else:
             For example, I respond to information about the structure of the git repository, what it does, and what functions are in.\n
             Here is the video of example.
             """)
-    st.video("data/video/GITTER_DEMO.webm", format="video/webm")
+    st.video("video/GITTER_DEMO.webm", format="video/webm")
