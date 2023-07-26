@@ -52,12 +52,12 @@ st.header("`Chatbot`")
 if st.session_state['repo_url']:
     with st.spinner('Analyzing Repository...'):
         # Return Value : "File_name" : "File_content"
-        github_info_dict, structure_content, _ = github_api_call(st.session_state['repo_url'])
+        github_info_dict, structure_content, _, user_content = github_api_call(st.session_state['repo_url'])
         
     # Return Values [Doc1, Doc2 ...]
     with st.spinner('Embedding to VectorSpace...'):
         docs = dictionary_to_docs(
-            github_info_dict, structure_content,
+            github_info_dict, structure_content, user_content,
             chunking_size=1000, overlap_size=0, 
             model_name=MODEL_NAME
         )

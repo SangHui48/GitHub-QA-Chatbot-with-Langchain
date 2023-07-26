@@ -129,10 +129,26 @@ def github_api_call(web_link):
     # print(tree_structure)
     structure_content = f'''
     {user_name} 's github link is {repo_name} and the {repo_name}'s github folder structure is like that.
-
+    
     {tree_structure}
     '''
-    return TOTAL_INFO_DICT, structure_content, ROOT
+
+        
+    email = get_avatar_info(user_name)['email']
+    repo_list = [repo for repo in get_repo_list(user_name)]
+    repo_structure = ""
+    for pre, _, node in RenderTree(ROOT):
+        file_name = node.name.split("/")[-1]
+        repo_structure += f"{pre}{repo_list}\n"
+
+    followers = get_followers(user_name)
+    user_content = f'''
+    {user_name}’s email is {email}.
+    {user_name}’s followers are {followers}.
+    {user_name}’s other repositories have {repo_structure}.
+    If you want to know about other repository content, change your repository selection.
+    '''
+    return TOTAL_INFO_DICT, structure_content, ROOT, user_content
 
 
 

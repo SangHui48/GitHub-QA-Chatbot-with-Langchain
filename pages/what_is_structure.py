@@ -96,7 +96,7 @@ def load_graph_data(github_link):
     global file_image_dict, nodes, edges
     
     nodes, edges = [], [] 
-    _, _ ,root = github_api_call(github_link)
+    _, _ ,root,_ = github_api_call(github_link)
 
     for _, _, tmp_node in RenderTree(root):
         file_path = tmp_node.name
@@ -194,7 +194,7 @@ if st.session_state['repo_url'] != "":
     user, repo = st.session_state['repo_url'].split('/')[-2:]
     with col2:
         # key : file_path , value : content 
-        total_repo_file_info_dict, _ ,_ = github_api_call(st.session_state['repo_url'])
+        total_repo_file_info_dict, _ ,_,_ = github_api_call(st.session_state['repo_url'])
         repo_list = [DEFAULT_SELECT_VALUE]  + list(total_repo_file_info_dict.keys())
         file_name = st.selectbox(
                 f"Select {repo}'s filename",
