@@ -78,13 +78,16 @@ if st.session_state['repo_url']:
         fetch_num=10, k_num=100
     )
     open_ai_model =  ChatOpenAI(model_name=MODEL_NAME)
-    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    st.session_state['chat_memory'] = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=open_ai_model,
-        memory=memory,
+        memory=st.session_state['chat_memory'],
         retriever=retriever,
         get_chat_history=lambda h : h,
     )
+    # DEBUG
+    # https://python.langchain.com/docs/modules/memory/buffer
+    print(st.session_state['chat_memory'].load_memory_variables({}))
 
     # QA Start 
     for message in st.session_state.messages:
