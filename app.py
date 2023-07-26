@@ -12,8 +12,9 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from githubqa.get_info_from_api import get_avatar_info, get_repo_list, github_api_call
 
-# 1. Session Initialize 
+# 1. Session Initialize & Donation
 initialize_session()
+buy_me_tea()
 
 # 2. Sidebar username input
 st.sidebar.title('`Gitter`:feather:')
@@ -106,4 +107,12 @@ if st.session_state['repo_url']:
                 message_placeholder.markdown(full_response)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
 else:
-    st.info('Please write your github name to the left side bar')
+    st.info('Please write your **GITHUB NAME** and **REPO** to the left side bar.')
+    st.info("""
+            I am an analysis tool for question-answering built on LangChain.\n
+            Given GitHub informations, I will analyze the repository using LangChain and store it in vectorDB.
+            And I will answer questions about GitHub through openAI.\n
+            For example, I respond to information about the structure of the git repository, what it does, and what functions are in.\n
+            Here is the video of example.
+            """)
+    st.video("data/video/GITTER_DEMO.webm", format="video/webm")
