@@ -113,6 +113,6 @@ else:
             Given GitHub informations, I will analyze the repository using LangChain and store it in vectorDB.
             And I will answer questions about GitHub through openAI.\n
             For example, I respond to information about the structure of the git repository, what it does, and what functions are in.\n
-            Here is the video of example.
+            Here is the video of example. 
             """)
     st.video("video/GITTER_DEMO.webm", format="video/webm")
