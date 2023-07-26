@@ -86,7 +86,7 @@ file_type_dictionary = {
     "m" : "objectivec",
     "pl" : "perl",
     "pm" : "perl",
-    "php" : "",
+    "php" : "php",
     "py" : "python",
     "R" : "r",
     "scala" : "scala",
