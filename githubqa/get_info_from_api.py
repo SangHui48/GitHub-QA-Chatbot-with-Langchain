@@ -252,3 +252,14 @@ def get_url_list(user_name):
         return url_repos
     else:
         return None
+    
+
+# def check_api_limit():
+#     url = f'https://api.github.com/rate_limit'
+#     # api 리미트 체크용 -> 만일 auth 체크했다면 뺴야함 ..!
+#     # response = requests.get(url,auth=("70cebd76ed1ad35e04e0", "919230fe025d4999b52f4bed63828f8c434d4788"))
+#     return response.json()
+
+
+# if __name__ == "__main__":
+#     print(check_api_limit())
