@@ -9,7 +9,7 @@ initialize_session()
 buy_me_tea()
 
 st.session_state["user_name"] = st.text_input(
-    'GitHub User:',  key="github_user_input", 
+    'GitHub User:',  key="github_user_input_test_page", 
     value=st.session_state["user_name"],
     on_change=handling_user_change
     )
@@ -20,13 +20,13 @@ st.session_state["user_name"] = st.text_input(
 
 if st.session_state["user_name"]:
     user = st.session_state["user_name"]
-    repo_list = get_repo_list(user)
+    repo_list = get_repo_list(user) 
     user_info = get_avatar_info(user)
     if repo_list:
         repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
         st.session_state["repo_name"] = st.selectbox(
                 f"Select {user}'s repository", repo_list, 
-                key="repo_select",
+                key="repo_select_test_page",
                 index=repo_list.index(st.session_state["repo_name"]),
             )
         if st.session_state["repo_name"] != DEFAULT_SELECT_VALUE:
