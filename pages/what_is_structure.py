@@ -17,24 +17,43 @@ st.set_page_config(layout="wide", page_title="What's the Structure")
 initialize_session()
 buy_me_tea()
 
-# Online Image link Hosting : https://imgbb.com/
-# Folder image link : https://i.ibb.co/9YC64Y4/folder.png
-# Github root link : https://i.ibb.co/8MN42Hb/root.png
-file_image_dict = {
-    "py" : "https://i.ibb.co/HD532QV/py.png",
-    "pdf" : "https://i.ibb.co/Gkptk9q/pdf.png",
-    "txt" : "https://i.ibb.co/23mfJx3/txt.png",
-    "ipynb": "https://i.ibb.co/nQ8yPfh/ipynb.png"
+## Get file icons
+# https://github.com/PKief/vscode-material-icon-theme/tree/main#file-icons
+file_image_dict = { # 추가 중. 정렬 아직 안함.
+    "py" : "python",
+    "pdf" : "pdf",
+    "txt" : "text",
+    "dir" : "folder-resource",
+    "file" : "lib",
+    "root" : "git",
+    "ipynb": "python-misc",
+    "exe" : "exe",
+    "jpg" : "image",
+    "jpeg" : "image",
+    "png" : "image",
+    "mp4" : "video",
+    "zip" : "zip",
+    "txt" : "text",
+    "md" : "markdown",
+    "txt" : "document",
+    
 }
 
+# 위 dictionary와 동일할지는 알아봐야함.
 file_type_dictionary = {
     ".md" : "markdown",
     ".py" : "python",
     ".js" : "javascript"
 }
 
-nodes, edges = [], []
+def get_file_icon_url(file_extension):
+    if file_extension in file_image_dict:
+        return f"https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/icons/{file_image_dict[file_extension.lower()]}.svg"
+    else:
+        return ""
 
+
+nodes, edges = [], []
 
 def print_directory_structure(user, repo, path='', depth=0):
     contents = get_github_content(user, repo, path)
@@ -55,12 +74,11 @@ def print_directory_structure(user, repo, path='', depth=0):
                 print_content(item['_links']['self'], get_file_type(item['path']))
             
 
-
 def get_file_type(file_name): # 현재 .md, .py, .js만 호환
     # https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_LANGUAGES_PRISM.MD
     extension_name = "." + file_name.split(".")[-1]
-    if extension_name in file_type_dictionary:
-        return file_type_dictionary[extension_name]
+    if extension_name in file_image_dict:
+        return file_image_dict[extension_name]
     else:
         return None
     
@@ -90,7 +108,7 @@ def load_graph_data(github_link):
                     label=file_name,
                     title=file_name,
                     shape="circularImage",
-                    image="https://i.ibb.co/8MN42Hb/root.png",
+                    image=get_file_icon_url('root'),
                     link=github_link,
                     # size=100, # 이런 식으로 수정하면 됨.
                     color="white", 
@@ -101,9 +119,9 @@ def load_graph_data(github_link):
                 extension_name = ""
             else:
                 extension_name = file_name.split(".")[1]
-            image_link = "https://i.ibb.co/T0jg7QZ/file.png"
+            image_link = get_file_icon_url('file')
             if extension_name in file_image_dict:
-                 image_link = file_image_dict[extension_name]
+                 image_link = get_file_icon_url(extension_name)
             nodes.append(
                 Node(
                     id=file_path, label=file_name,
@@ -117,7 +135,7 @@ def load_graph_data(github_link):
                     id=file_path,
                     label=file_name,
                     shape="circularImage",
-                    image="https://i.ibb.co/9YC64Y4/folder.png",
+                    image=get_file_icon_url('dir'),
                     color="white"
                     )
                 )  
