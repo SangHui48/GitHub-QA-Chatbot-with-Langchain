@@ -92,6 +92,8 @@ def get_dir_info(api_link, path_name, parent_node ):
                 content = ""
             TOTAL_INFO_DICT[next_path_name] = content
         elif file_info["type"] == "dir":
+            if file_name in ["node_modules"]:
+                continue
             dir_node = Node(next_path_name, parent=parent_node)
             get_dir_info(file_api_link, next_path_name, dir_node)
 
@@ -142,7 +144,7 @@ def get_github_content(user, repo, path=''):
 
 
 
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def get_language_list(user_name,repo_name):
     user_repos = []
     
@@ -155,7 +157,7 @@ def get_language_list(user_name,repo_name):
     else:
         return None
     
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def get_contributors(user_name,repo_name):
     user_repos = []
     html_repos = []
@@ -171,7 +173,7 @@ def get_contributors(user_name,repo_name):
         return None
 
     
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def get_forks(user_name,repo_name):
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/forks'
     response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
@@ -183,7 +185,7 @@ def get_forks(user_name,repo_name):
     else:
         return None
     
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def get_stars(user_name,repo_name):
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/stargazers'
     response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
@@ -208,7 +210,7 @@ def get_followers(user_name):
     else:
         return None
     
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def get_commits(user_name,repo_name):
     user_repos = []
     

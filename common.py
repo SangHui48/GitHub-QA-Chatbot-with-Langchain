@@ -1,5 +1,6 @@
 import streamlit as st
 from githubqa.get_info_from_api import get_repo_list
+from streamlit.components.v1 import html
 
 DEFAULT_SELECT_VALUE = "Select Repo"
 MODEL_NAME = "gpt-3.5-turbo-16k"
@@ -17,4 +18,24 @@ def initialize_session():
 def handling_user_change():
     st.session_state["repo_name"] = DEFAULT_SELECT_VALUE
     st.session_state["repo_url"] = ""
+
+
+def buy_me_tea():
+    button = """
+    <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="omijatea" data-color="#FFDD00" data-emoji="🍵"  data-font="Cookie" data-text="Buy me a tea" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
+    """
     
+    html(button, height=70, width=220)
+
+    st.markdown(
+        """
+        <style>
+            iframe[width="220"] {
+                position: fixed;
+                top: 50px;
+                right: 30px;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )

@@ -1,11 +1,14 @@
 import streamlit as st
 import pandas as pd
+from common import *
+
+st.set_page_config(page_title="Gitter", page_icon="🪶")
+buy_me_tea()
 
 df = pd.DataFrame({
     '직급': ['대원수 동지🇰🇵', '대좌 동지', '대좌 동지', '함경도 감자 농사꾼']
 }, index=['박원영', '김재형', '전상민', '한상희'])
 
-st.set_page_config(page_title="Gitter", page_icon="🪶")
 
 st.markdown("# 깃-털(Gitter) : “깃헙을 털다.” 🧨\n")
 st.sidebar.header("About Gitter 🪶")
