@@ -22,8 +22,6 @@ st.session_state["user_name"] = st.sidebar.text_input(
     on_change=handling_user_change
     )
 
-# tab1, tab2 = st.tabs(["About User", "About Repo"])
-
 if st.session_state["user_name"]:
     user_name = st.session_state["user_name"]
     repo_list = get_repo_list(user_name)
