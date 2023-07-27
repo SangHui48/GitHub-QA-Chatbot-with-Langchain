@@ -108,7 +108,6 @@ def get_markdown_language_form(file_name):
     else:
         return None
     
-#
 
 nodes, edges = [], []
 
@@ -203,7 +202,7 @@ st.session_state["user_name"] = st.sidebar.text_input(
     )
 if st.session_state["user_name"]:
     user_name = st.session_state["user_name"]
-    repo_list = get_repo_list(user_name)
+    repo_list = get_repo_list(user_name)[0]
     user_info = get_avatar_info(user_name)
     if repo_list:
         repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
