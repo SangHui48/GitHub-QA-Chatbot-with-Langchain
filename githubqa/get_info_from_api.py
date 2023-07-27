@@ -129,10 +129,26 @@ def github_api_call(web_link):
     # print(tree_structure)
     structure_content = f'''
     {user_name} 's github link is {repo_name} and the {repo_name}'s github folder structure is like that.
-
+    
     {tree_structure}
     '''
-    return TOTAL_INFO_DICT, structure_content, ROOT
+
+        
+    email = get_avatar_info(user_name)['email']
+    repo_list = [repo for repo in get_repo_list(user_name)]
+    repo_structure = ""
+    for pre, _, node in RenderTree(ROOT):
+        file_name = node.name.split("/")[-1]
+        repo_structure += f"{pre}{repo_list}\n"
+
+    followers = get_followers(user_name)
+    user_content = f'''
+    {user_name}’s email is {email}.
+    {user_name}’s followers are {followers}.
+    {user_name}’s other repositories have {repo_structure}.
+    If you want to know about other repository content, change your repository selection.
+    '''
+    return TOTAL_INFO_DICT, structure_content, ROOT, user_content
 
 
 
@@ -236,3 +252,14 @@ def get_url_list(user_name):
         return url_repos
     else:
         return None
+    
+
+# def check_api_limit():
+#     url = f'https://api.github.com/rate_limit'
+#     # api 리미트 체크용 -> 만일 auth 체크했다면 뺴야함 ..!
+#     # response = requests.get(url,auth=("70cebd76ed1ad35e04e0", "919230fe025d4999b52f4bed63828f8c434d4788"))
+#     return response.json()
+
+
+# if __name__ == "__main__":
+#     print(check_api_limit())
