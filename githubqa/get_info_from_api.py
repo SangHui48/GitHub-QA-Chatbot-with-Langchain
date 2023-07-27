@@ -145,7 +145,7 @@ def github_api_call(web_link):
     email = get_avatar_info(user_name)['email']
     followers = get_followers(user_name)
     repo_list = [repo for repo in repo_list]
-    repo_structure = ""
+    repo_structure = "" # 현재 쓰이지 않고 있음.
     for pre, _, node in RenderTree(ROOT):
         file_name = node.name.split("/")[-1]
         repo_structure += f"{pre}{repo_list}\n"
@@ -155,7 +155,7 @@ def github_api_call(web_link):
 
     {user_name}’s followers are {followers}.
 
-    {user_name}’s other repositories have {repo_structure}.
+    {user_name}’s other repositories have {repo_list}.
     If you want to know about other repository content, change your repository selection.
     '''
     return TOTAL_INFO_DICT, structure_content, ROOT, user_content
