@@ -65,6 +65,7 @@ if st.session_state["user_name"]:
             forks = [fork for fork in repo_info[3]]
             stars = [star for star in repo_info[2]]
             repo_url = [url for url in repo_info[1]]
+            # languages = [lang for lang in repo_info[4]]
         
         # 날짜 별 commit 수 flow chart
         commits = [get_commits(user_name, repo) for repo in repo_name]

@@ -16,7 +16,7 @@ ROOT = None
 def get_avatar_info(user_name):
     # name : 닉네임 , public_repos , avatar_url
     url = f'https://api.github.com/users/{user_name}'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
     return response.json()
 
     
@@ -26,16 +26,18 @@ def get_repo_list(user_name):
     html_repos = []
     star_repos = []
     fork_repos = []
+    test = []
     
     url = f'https://api.github.com/users/{user_name}/repos'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict['name'])
             html_repos.append(tmp_dict['html_url'])
             star_repos.append(tmp_dict['stargazers_count'])
             fork_repos.append(tmp_dict['forks_count'])
-        return user_repos, html_repos, star_repos, fork_repos
+            test.append(tmp_dict['language'])
+        return user_repos, html_repos, star_repos, fork_repos,test
     else:
         return None
 
@@ -162,7 +164,7 @@ def github_api_call(web_link):
 @st.cache_data()
 def get_github_content(user, repo, path=''):
     url = f'https://api.github.com/repos/{user}/{repo}/contents/{path}'
-    response = requests.get(url, auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    response = requests.get(url, auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
     return response.json()
 
 
@@ -172,7 +174,7 @@ def get_language_list(user_name,repo_name):
     user_repos = []
     
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/languages'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_LANG"], st.secrets["GITHUB_TOKEN_LANG"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_2"], st.secrets["GITHUB_TOKEN_2"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict)
@@ -186,7 +188,7 @@ def get_contributors(user_name,repo_name):
     html_repos = []
     
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/contributors'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_3"], st.secrets["GITHUB_TOKEN_3"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict['login'])
@@ -202,7 +204,7 @@ def get_followers(user_name):
     html_repos = []
     
     url = f'https://api.github.com/users/{user_name}/followers'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_FOLLOW"], st.secrets["GITHUB_TOKEN_FOLLOW"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict['login'])
@@ -216,7 +218,7 @@ def get_commits(user_name,repo_name):
     user_repos = []
     
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/commits'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_COMMIT"], st.secrets["GITHUB_TOKEN_COMMIT"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict)
