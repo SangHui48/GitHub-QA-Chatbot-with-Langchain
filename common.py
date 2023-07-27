@@ -12,12 +12,15 @@ def initialize_session():
         st.session_state["repo_url"] = ""
         st.session_state["visitied_list"] = []
         st.session_state["messages"] = []
+        st.session_state["oai_key"] = ""
 
 
 def handling_user_change():
     st.session_state["repo_name"] = DEFAULT_SELECT_VALUE
     st.session_state["repo_url"] = ""
 
+def handling_openai_key_change():
+    st.session_state["oai_key"] = ""
 
 def buy_me_tea():
     button = """

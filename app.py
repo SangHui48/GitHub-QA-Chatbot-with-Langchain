@@ -1,3 +1,4 @@
+import os
 import time
 import requests
 from common import *
@@ -17,13 +18,21 @@ initialize_session()
 buy_me_tea()
 
 # 2. Sidebar username input
+st.session_state['oai_key'] = st.sidebar.text_input(
+    'Open API KEY:',  key="open_api", 
+    value=st.session_state["oai_key"],
+    on_change=handling_openai_key_change,
+    type="password"
+    )
+if st.session_state['oai_key']:
+    os.environ['OPENAI_API_KEY'] = st.session_state['oai_key']
+
 st.sidebar.title('`Gitter`:feather:')
 st.session_state["user_name"] = st.sidebar.text_input(
     'GitHub User:',  key="github_user_input", 
     value=st.session_state["user_name"],
     on_change=handling_user_change
     )
-
 # 3. Sidebar Select Repo + User Avatar layout
 if st.session_state["user_name"]:
     user_name = st.session_state['user_name']
