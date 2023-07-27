@@ -107,7 +107,7 @@ if st.session_state['repo_url']:
                 message_placeholder.markdown(full_response)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
 else:
-    st.info('Please write your **GITHUB NAME** and **REPO** to the left side bar.')
+    st.info('Hit your **GITHUB NAME** and **REPO** to the left side bar.')
     st.info("""
             I am an analysis tool for question-answering built on LangChain.\n
             Given GitHub informations, I will analyze the repository using LangChain and store it in vectorDB.

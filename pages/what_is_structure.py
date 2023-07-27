@@ -267,7 +267,7 @@ if st.session_state['repo_url']:
             st.info("select your file_name")
         # print_directory_structure(user, repo)
 else:
-    st.info('Please insert your name and repo_name')
+    st.info('Hit your name and repo_name')
 
 # 1. Build the config (with sidebar to play with options) .
 # config_builder = ConfigBuilder(nodes)
