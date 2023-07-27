@@ -27,7 +27,7 @@ st.session_state["user_name"] = st.sidebar.text_input(
 # 3. Sidebar Select Repo + User Avatar layout
 if st.session_state["user_name"]:
     user_name = st.session_state['user_name']
-    repo_list = get_repo_list(user_name)
+    repo_list = get_repo_list(user_name)[0]
     user_info = get_avatar_info(user_name)
     if repo_list:
         repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
@@ -110,7 +110,7 @@ if st.session_state['repo_url']:
                 message_placeholder.markdown(full_response)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
 else:
-    st.info('Please write your **GITHUB NAME** and **REPO** to the left side bar.')
+    st.info('Hit your **GITHUB NAME** and **REPO** to the left side bar.')
     st.info("""
             I am an analysis tool for question-answering built on LangChain.\n
             Given GitHub informations, I will analyze the repository using LangChain and store it in vectorDB.

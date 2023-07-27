@@ -1,5 +1,4 @@
 import streamlit as st
-from githubqa.get_info_from_api import get_repo_list
 from streamlit.components.v1 import html
 
 DEFAULT_SELECT_VALUE = "Select Repo"
