@@ -204,7 +204,7 @@ def get_followers(user_name):
     html_repos = []
     
     url = f'https://api.github.com/users/{user_name}/followers'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_2"], st.secrets["GITHUB_TOKEN_2"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict['login'])
