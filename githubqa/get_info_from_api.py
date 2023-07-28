@@ -146,8 +146,8 @@ def github_api_call(web_link):
         
     # print(tree_structure)
     structure_content = f'''
-    {user_name} 's github link is {repo_name} and the {repo_name}'s github folder structure is like that.
-    
+    {repo_name} is a Git repository made by {user_name}.
+    This is the structure of {repo_name}.
     {tree_structure}
     '''
 
@@ -156,13 +156,8 @@ def github_api_call(web_link):
     followers = get_followers(user_name)
     repo_list = [repo for repo in repo_list]
 
+    # 이메일, 팔로워 명단 (전체), 리포 리스트가 들어가 있던 프롬프트. 현재 조금 더 유익한 정보를 모색하기 위해 빼놓은 상태.
     user_content = f'''
-    {user_name}’s email is {email}.
-
-    {user_name}’s followers are {followers}.
-
-    {user_name}’s other repositories have {repo_list}.
-    If you want to know about other repository content, change your repository selection.
     '''
     return TOTAL_INFO_DICT, structure_content, ROOT, user_content
 
