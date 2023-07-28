@@ -13,7 +13,7 @@ from githubqa.get_info_from_api import (
 initialize_session()
 buy_me_tea()
 
-st.title("`Search User's Repo`")
+st.title('`Search User\'s Repo`')
 
 st.session_state["user_name"] = st.sidebar.text_input(
     'GitHub User:',  key="github_user_input_search_whois", 
@@ -47,7 +47,7 @@ if st.session_state["user_name"]:
     st.dataframe(
         df,
         column_config={
-            "avartar": st.column_config.ImageColumn("😃 avartar", help="User's Github Avartar"),
+            "avartar": st.column_config.ImageColumn("🤡 avartar", help="User's Github Avartar"),
             "e-mail": "📧 e-mail",
             "total repos": "👝 total repos",
             "followers": "🤝 followers"
@@ -57,7 +57,7 @@ if st.session_state["user_name"]:
 
     if repo_list:
         # ======= All Repo Info Table ========
-        with st.spinner('Getting user information...'):
+        with st.spinner('Getting User Information...'):
             st.subheader("User's Repositories")
             repo_name = [repo for repo  in repo_list if repo !=DEFAULT_SELECT_VALUE]
             languages = [get_language_list(user_name, repo) for repo in repo_name]
@@ -68,7 +68,7 @@ if st.session_state["user_name"]:
             # languages = [lang for lang in repo_info[4]]
         
         # 날짜 별 commit 수 flow chart
-        with st.spinner('Getting commits...'):
+        with st.spinner('Getting repo commit Information...'):
             commits = [get_commits(user_name, repo) for repo in repo_name]
         commit_list = []
         for i in range(len(commits)):
@@ -94,7 +94,7 @@ if st.session_state["user_name"]:
         st.dataframe(
             df,
             column_config={
-                "name": "GitHub Name",
+                "name": "GitHub name",
                 "stars": st.column_config.NumberColumn(
                     "GitHub Stars",
                     help="Number of stars on GitHub",
@@ -110,4 +110,4 @@ if st.session_state["user_name"]:
             hide_index=True,
         )
     else:
-        st.error("Invalid username")
+        st.error("Invalid user ID")
