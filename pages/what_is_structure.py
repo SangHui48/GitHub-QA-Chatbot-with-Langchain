@@ -202,7 +202,7 @@ if st.session_state['repo_url']:
     nodes, edges = [], [] 
     nodes, edges = load_graph_data(st.session_state['repo_url'])
 
-    radiobutton_config = st.radio(
+    radiobutton_config = st.sidebar.radio(
                             "Layout",
                             ('Physics', 'Hierarchical'),
                         )
@@ -241,4 +241,4 @@ if st.session_state['repo_url']:
             pass # 공백.
             # st.info("select your file_name")
 else:
-    st.info('Please input Username and name of the repository.')
+    st.info('Please input **Username** and **name of the repository**.')
