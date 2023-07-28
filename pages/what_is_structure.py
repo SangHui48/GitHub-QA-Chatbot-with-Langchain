@@ -11,7 +11,7 @@ from githubqa.get_info_from_api import (
     github_api_call, get_repo_list, get_avatar_info
 )
 
-st.set_page_config(layout="wide", page_title="What's the Structure")
+st.set_page_config(layout="wide", page_title="What's the Structure?")
 
 initialize_session()
 buy_me_tea()
@@ -170,7 +170,7 @@ def load_graph_data(github_link):
 
 
 st.session_state["user_name"] = st.sidebar.text_input(
-    'GitHub User:',  key="github_user_input_sturcture", 
+    'GitHub Username:',  key="github_user_input_sturcture", 
     value=st.session_state["user_name"],
     on_change=handling_user_change
     )
@@ -181,7 +181,7 @@ if st.session_state["user_name"]:
     if repo_list:
         repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
         st.session_state["repo_name"] = st.sidebar.selectbox(
-                f"Select {user_name}'s repository", repo_list, 
+                f"Select {user_name}'s repository:", repo_list, 
                 key="repo_select_graph_visualize",
                 index=repo_list.index(st.session_state["repo_name"]),
             )
@@ -192,7 +192,7 @@ if st.session_state["user_name"]:
         image = Image.open(BytesIO(image_response.content)).resize((250,250))
         st.sidebar.image(image, use_column_width='always', caption=f"{user_name}'s profile")
     else:
-        st.error("Invalid user ID")
+        st.error("Invalid username")
 
 
 if st.session_state['repo_url']:
@@ -238,6 +238,7 @@ if st.session_state['repo_url']:
                 line_numbers=True
             )
         else:
-            st.info("select your file_name")
+            pass # 공백.
+            # st.info("select your file_name")
 else:
-    st.info('Hit your name and repo_name')
+    st.info('Please input Username and name of the repository.')

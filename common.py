@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit.components.v1 import html
 
-DEFAULT_SELECT_VALUE = "Select Repo"
+DEFAULT_SELECT_VALUE = "Select repository"
 MODEL_NAME = "gpt-3.5-turbo-16k"
 
 def initialize_session():
