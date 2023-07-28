@@ -6,9 +6,24 @@ st.set_page_config(page_title="Gitter", page_icon="🪶")
 buy_me_tea()
 
 
+
+
 st.markdown("# 깃-털(Gitter) : “깃헙을 털다.” 🧨\n")
 st.sidebar.header("About Gitter 🪶")
-st.sidebar.dataframe(df, use_container_width=True)
+
+
+df = pd.DataFrame({
+    'GitHub': ['https://github.com/holly-21', 'https://github.com/aza1200', 'https://github.com/furthermares', 'https://github.com/SangHui48']
+}, index=['박원영', '김재형', '전상민', '한상희'])
+
+def make_clickable(link):
+    text = link.split('/')[-1]
+    return f'<a target="_blank" href="{link}">{text}</a>'
+
+df['GitHub'] = df['GitHub'].apply(make_clickable)
+df = df.to_html(escape=False)
+st.sidebar.write(df, unsafe_allow_html=True)
+
 
 st.markdown('## For Whom 🧐')
 st.write("""
