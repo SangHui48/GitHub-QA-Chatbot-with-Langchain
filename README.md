@@ -19,7 +19,7 @@ Git-ter is not just a chit-chat chatbot, provides file structure, code analysis,
 <br>
 
 # DEMO Video
-![DEMO video](https://github.com/SangHui48/GitHub-QA-Chatbot-with-Langchain/assets/48376471/92aa97e6-06ed-4073-9d79-c200e472f415)
+![GITTER_DEMO](https://github.com/SangHui48/GitHub-QA-Chatbot-with-Langchain/assets/48376471/91b98d3d-77e1-4487-aeba-24113f85c4e7)
 
 
 <br>
