@@ -7,7 +7,7 @@ import streamlit as st
 from githubqa.vector_db import *
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from githubqa.data_processing import dictionary_to_docs
+from githubqa.data_processing import dictionary_to_docs, create_retriever
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from githubqa.get_info_from_api import get_avatar_info, get_repo_list, github_api_call
@@ -63,29 +63,28 @@ if st.session_state['repo_url']:
         )
         # Chunked Data to Vector embedding 
         embedding_model = OpenAIEmbeddings(model='text-embedding-ada-002')
+        retriever = create_retriever(embedding_model, docs)
 
         if st.session_state['repo_url'] not in st.session_state['visitied_list']:
-            vector_db = db_from_pinecone(docs, embedding_model)
-            st.session_state['vector_db'] = vector_db
+            retriever = create_retriever(embedding_model, docs)
+            st.session_state['retriever'] = retriever
             st.session_state['visitied_list'].append(st.session_state['repo_url'])
             st.session_state['messages'] = []
         else:
-            vector_db =  st.session_state['vector_db']
+            retriever =  st.session_state['retriever']
 
-    # Retriever setting for Question_Answering 
-    retriever =  mmr_retriever_setting(
-        vectorstore=vector_db, 
-        fetch_num=10, k_num=100
-    )
+        
     open_ai_model =  ChatOpenAI(model_name=MODEL_NAME)
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=open_ai_model,
         memory=memory,
         retriever=retriever,
         get_chat_history=lambda h : h,
     )
-
+    # print("[DEBUG] Memory:", memory.load_memory_variables({}))
+    # QA Start 
     # QA Start 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
