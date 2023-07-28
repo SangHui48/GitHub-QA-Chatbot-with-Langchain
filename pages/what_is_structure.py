@@ -44,8 +44,9 @@ file_image_dict = {
 }
 
 def get_file_icon_url(file_extension):
+    file_extension = file_extension.lower()
     if file_extension in file_image_dict:
-        return f"https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/icons/{file_image_dict[file_extension.lower()]}.svg"
+        return f"https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/icons/{file_image_dict[file_extension]}.svg"
     else:
         return ""
 
@@ -85,7 +86,7 @@ file_type_dictionary = {
     "m" : "objectivec",
     "pl" : "perl",
     "pm" : "perl",
-    "php" : "",
+    "php" : "php",
     "py" : "python",
     "R" : "r",
     "scala" : "scala",
@@ -102,6 +103,7 @@ file_type_dictionary = {
 
 def get_markdown_language_form(file_name):
     extension_name = file_name.split(".")[-1]
+    extension_name = extension_name.lower()
     if extension_name in file_image_dict:
         return file_image_dict[extension_name]
     else:
@@ -200,7 +202,7 @@ if st.session_state['repo_url']:
     nodes, edges = [], [] 
     nodes, edges = load_graph_data(st.session_state['repo_url'])
 
-    radiobutton_config = st.radio(
+    radiobutton_config = st.sidebar.radio(
                             "Layout",
                             ('Physics', 'Hierarchical'),
                         )
@@ -238,4 +240,4 @@ if st.session_state['repo_url']:
         else:
             st.info("select your file_name")
 else:
-    st.info('Hit your name and repo_name')
+    st.info('Hit your **GITHUB NAME** and **REPO** to the left side bar.')

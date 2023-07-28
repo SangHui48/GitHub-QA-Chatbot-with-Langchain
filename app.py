@@ -75,16 +75,21 @@ if st.session_state['repo_url']:
 
         
     open_ai_model =  ChatOpenAI(model_name=MODEL_NAME)
-    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-    
+
+    if not st.session_state['chat_memory']:
+        st.session_state['chat_memory'] = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    memory = st.session_state['chat_memory']
+
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=open_ai_model,
         memory=memory,
         retriever=retriever,
         get_chat_history=lambda h : h,
+        verbose=True,
     )
+    # DEBUG
     # print("[DEBUG] Memory:", memory.load_memory_variables({}))
-    # QA Start 
+
     # QA Start 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):

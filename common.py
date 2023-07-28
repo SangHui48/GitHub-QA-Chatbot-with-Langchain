@@ -12,6 +12,7 @@ def initialize_session():
         st.session_state["repo_url"] = ""
         st.session_state["visitied_list"] = []
         st.session_state["messages"] = []
+        st.session_state["chat_memory"] = None
 
 
 def handling_user_change():
