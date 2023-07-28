@@ -68,7 +68,8 @@ if st.session_state["user_name"]:
             # languages = [lang for lang in repo_info[4]]
         
         # 날짜 별 commit 수 flow chart
-        commits = [get_commits(user_name, repo) for repo in repo_name]
+        with st.spinner('Getting repo commit Information...'):
+            commits = [get_commits(user_name, repo) for repo in repo_name]
         commit_list = []
         for i in range(len(commits)):
             commits_dict={}

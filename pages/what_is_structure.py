@@ -8,8 +8,7 @@ from anytree import RenderTree
 from streamlit_agraph import agraph, Node, Edge, Config
 from streamlit_agraph.config import Config
 from githubqa.get_info_from_api import (
-    github_api_call, get_repo_list, 
-    get_avatar_info, get_github_content
+    github_api_call, get_repo_list, get_avatar_info
 )
 
 st.set_page_config(layout="wide", page_title="What's the Structure")
@@ -113,33 +112,6 @@ def get_markdown_language_form(file_name):
 
 nodes, edges = [], []
 
-def print_directory_structure(user, repo, path='', depth=0):
-    contents = get_github_content(user, repo, path)
-
-    # GitHub API 제한 핸들링
-    try:
-        if contents["message"].startswith("API rate limit exceeded for"):
-            print("ERROR: API rate limit exceeded!")
-            st.write("ERROR: API rate limit exceeded!")
-    except:
-        pass # 핸들링 안하는 중. 에러 메세지 그대로 출력.
-
-    for item in contents:
-        if item['type'] == 'dir':
-            print_directory_structure(user, repo, item['path'], depth+1)
-        else:
-            if st.button(item['path']):
-                print_content(item['_links']['self'], get_markdown_language_form(item['path']))
-    
-def print_content(url, file_type):
-    response = requests.get(url,  auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"])).json()
-    try:
-        content = base64.b64decode(response['content']).decode('utf-8')
-        with col2:
-            st.code(content, language=file_type, line_numbers=True)
-    except:
-        st.code("Cannot read this file_content", language="markdown", line_numbers=True)
-    
 
 def load_graph_data(github_link):
     global file_image_dict, nodes, edges
@@ -267,16 +239,5 @@ if st.session_state['repo_url']:
             )
         else:
             st.info("select your file_name")
-        # print_directory_structure(user, repo)
 else:
     st.info('Hit your name and repo_name')
-
-# 1. Build the config (with sidebar to play with options) .
-# config_builder = ConfigBuilder(nodes)
-# config = config_builder.build()
-
-# 2. If your done, save the config to a file.
-# config.save("config.json")
-
-# 3. Simple reload from json file (you can bump the builder at this point.)
-# config = Config(from_json="config.json")
