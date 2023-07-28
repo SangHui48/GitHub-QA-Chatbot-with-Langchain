@@ -240,4 +240,4 @@ if st.session_state['repo_url']:
         else:
             st.info("select your file_name")
 else:
-    st.info('Hit your name and repo_name')
+    st.info('Hit your **GITHUB NAME** and **REPO** to the left side bar.')
