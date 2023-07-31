@@ -1,5 +1,7 @@
 # Git-ter : GitHub QA Chatbot with Langchain
 
+[Demo App Link](https://omijacha2.streamlit.app/)
+
 Git-ter is short for <i>**"Feather: Rob a Github"**</i>, and has the same pronunciation as "Feather" in Korean.<br>
 Git-ter is an analytical chatbot development framework dedicated to GitHub.<br>
 Git-ter's goal is to **increase the productivity and efficiency of development** by helping shorten the time and effort to study through chatbot applications.
