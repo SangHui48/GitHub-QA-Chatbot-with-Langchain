@@ -9,20 +9,17 @@ attrs==23.1.0
 backcall==0.2.0
 beautifulsoup4==4.12.2
 blinker==1.6.2
-boltons @ file:///C:/b/abs_707eo7c09t/croot/boltons_1677628723117/work
+boltons==23.0.0
 brotlipy==0.7.0
 cachetools==5.3.1
-certifi @ file:///C:/b/abs_4a0polqwty/croot/certifi_1683875377622/work/certifi
-cffi @ file:///C:/b/abs_49n3v2hyhr/croot/cffi_1670423218144/work
+certifi==2023.5.7
+cffi==1.15.1
 charset-normalizer==3.2.0
 click==8.1.5
-colorama @ file:///C:/b/abs_a9ozq0l032/croot/colorama_1672387194846/work
+colorama==0.4.6
 comm==0.1.3
-conda @ file:///C:/b/abs_b5q92oum8h/croot/conda_1689272261421/work
-conda-package-handling @ file:///C:/b/abs_ce4_vcfd0y/croot/conda-package-handling_1685024800103/work
-conda_package_streaming @ file:///C:/b/abs_88a7k_wmm1/croot/conda-package-streaming_1685019697115/work
 contourpy==1.1.0
-cryptography @ file:///C:/b/abs_8ecplyc3n2/croot/cryptography_1677533105000/work
+cryptography==39.0.1
 cycler==0.11.0
 dataclasses-json==0.5.9
 debugpy==1.6.7
@@ -42,7 +39,7 @@ greenlet==2.0.2
 h11==0.14.0
 htbuilder==0.6.1
 httpcore==0.17.3
-idna @ file:///C:/b/abs_bdhbebrioa/croot/idna_1666125572046/work
+idna==3.4
 importlib-metadata==6.8.0
 importlib-resources==6.0.0
 ipykernel==6.23.2
@@ -50,7 +47,7 @@ ipython==8.14.0
 isodate==0.6.1
 jedi==0.18.2
 Jinja2==3.1.2
-jsonpatch @ file:///tmp/build/80754af9/jsonpatch_1615747632069/work
+jsonpatch==1.32
 jsonpointer==2.1
 jsonschema==4.18.3
 jsonschema-specifications==2023.6.1
@@ -70,7 +67,6 @@ marshmallow-enum==1.5.1
 matplotlib==3.7.2
 matplotlib-inline==0.1.6
 mdurl==0.1.2
-menuinst @ file:///C:/Users/BUILDE~1/AppData/Local/Temp/abs_455sf5o0ct/croots/recipe/menuinst_1661805970842/work
 more-itertools==9.1.0
 multidict==6.0.4
 mypy-extensions==1.0.0
@@ -86,24 +82,24 @@ parso==0.8.3
 pickleshare==0.7.5
 Pillow==9.5.0
 pinecone-client==2.2.2
-pluggy @ file:///C:/ci/pluggy_1648024580010/work
+pip==23.1.2
+pluggy==1.0.0
 prompt-toolkit==3.0.38
 protobuf==3.20.3
 psutil==5.9.5
 pure-eval==0.2.2
 pyarrow==12.0.1
-pycosat @ file:///C:/b/abs_4b1rrw8pn9/croot/pycosat_1666807711599/work
-pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pycparser==2.21
 pydantic==1.10.11
 pydeck==0.8.1b0
 Pygments==2.15.1
 pymdown-extensions==10.1
 Pympler==1.0.1
-pyOpenSSL @ file:///C:/b/abs_552w85x1jz/croot/pyopenssl_1677607703691/work
+pyOpenSSL==23.0.0
 pyparsing==3.0.9
 pypdf==3.13.0
 PyPDF2==3.0.1
-PySocks @ file:///C:/ci/pysocks_1605307512533/work
+PySocks==1.7.1
 python-dateutil==2.8.2
 python-dotenv==1.0.0
 pytz==2023.3
@@ -116,9 +112,10 @@ regex==2023.6.3
 requests==2.31.0
 rich==13.4.2
 rpds-py==0.8.10
-ruamel.yaml @ file:///C:/b/abs_30ee5qbthd/croot/ruamel.yaml_1666304562000/work
-ruamel.yaml.clib @ file:///C:/b/abs_aarblxbilo/croot/ruamel.yaml.clib_1666302270884/work
+ruamel.yaml==0.17.21
+ruamel.yaml.clib==0.2.6
 semver==3.0.1
+setuptools==67.8.0
 six==1.16.0
 smmap==5.0.0
 sniffio==1.3.0
@@ -141,19 +138,20 @@ streamlit-vertical-slider==1.0.2
 tenacity==8.2.2
 tiktoken==0.4.0
 toml==0.10.2
-toolz @ file:///C:/b/abs_cfvk6rc40d/croot/toolz_1667464080130/work
+toolz==0.12.0
 tornado==6.3.2
-tqdm @ file:///C:/b/abs_f76j9hg7pv/croot/tqdm_1679561871187/work
+tqdm==4.65.0
 traitlets==5.9.0
-typing-inspect==0.9.0
 typing_extensions==4.7.1
+typing-inspect==0.9.0
 tzdata==2023.3
 tzlocal==4.3.1
 urllib3==2.0.3
 validators==0.20.0
 watchdog==3.0.0
 wcwidth==0.2.6
-win-inet-pton @ file:///C:/ci/win_inet_pton_1605306162074/work
+wheel==0.38.4
+win-inet-pton==1.1.0
 win32-setctime==1.1.0
 yarl==1.9.2
 zipp==3.16.2

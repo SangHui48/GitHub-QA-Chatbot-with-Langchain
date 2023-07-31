@@ -12,26 +12,44 @@ TOTAL_INFO_DICT = {}
 ROOT = None
 
 
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def get_avatar_info(user_name):
     # name : 닉네임 , public_repos , avatar_url
     url = f'https://api.github.com/users/{user_name}'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
-    return response.json()
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
     
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None 
     
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def get_repo_list(user_name):
     user_repos = []
+    html_repos = []
+    star_repos = []
+    fork_repos = []
     
-    url = f'https://api.github.com/users/{user_name}/repos'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
-    if response.status_code == 200:
-        for tmp_dict in response.json():
-            user_repos.append(tmp_dict['name'])
-        return user_repos
+    user_info =  get_avatar_info(user_name)
+    if user_info:
+        total_repo_cnt = user_info['public_repos']
+        total_page_cnt = (total_repo_cnt // 30) + 1 
     else:
         return None
+    
+    
+    for page_num in range(1, total_page_cnt+1):
+        url = f'https://api.github.com/users/{user_name}/repos?page={page_num}'
+        response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
+        if response.status_code == 200:
+            for tmp_dict in response.json():
+                user_repos.append(tmp_dict['name'])
+                html_repos.append(tmp_dict['html_url'])
+                star_repos.append(tmp_dict['stargazers_count'])
+                fork_repos.append(tmp_dict['forks_count'])
+            else:
+                continue
+    return user_repos, html_repos, star_repos, fork_repos
 
 
 def api_call(api_link):
@@ -98,7 +116,7 @@ def get_dir_info(api_link, path_name, parent_node ):
             get_dir_info(file_api_link, next_path_name, dir_node)
 
 
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def github_api_call(web_link):
     global ROOT,API_CALL_COUNT,TOTAL_INFO_DICT
 
@@ -128,20 +146,27 @@ def github_api_call(web_link):
         
     # print(tree_structure)
     structure_content = f'''
-    {user_name} 's github link is {repo_name} and the {repo_name}'s github folder structure is like that.
-
+    {repo_name} is a Git repository made by {user_name}.
+    This is the structure of {repo_name}.
     {tree_structure}
     '''
-    return TOTAL_INFO_DICT, structure_content, ROOT
 
+    repo_list = get_repo_list(user_name)[0]
+    email = get_avatar_info(user_name)['email']
+    followers = get_followers(user_name)
+    repo_list = [repo for repo in repo_list]
 
+    # 이메일, 팔로워 명단 (전체), 리포 리스트가 들어가 있던 프롬프트. 현재 조금 더 유익한 정보를 모색하기 위해 빼놓은 상태.
+    # 빼놓기 잠시 취소
+    user_content = f'''
+    {user_name}'s email is {email}.
 
-@st.cache_data()
-def get_github_content(user, repo, path=''):
-    url = f'https://api.github.com/repos/{user}/{repo}/contents/{path}'
-    response = requests.get(url, auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
-    return response.json()
+    {user_name}'s followers are {followers}.
 
+    {user_name}'s other repositories have {repo_list}.
+    If you want to know about other repository content, change your repository selection.
+    '''
+    return TOTAL_INFO_DICT, structure_content, ROOT, user_content
 
 
 @st.cache_data(show_spinner=False)
@@ -149,51 +174,30 @@ def get_language_list(user_name,repo_name):
     user_repos = []
     
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/languages'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_2"], st.secrets["GITHUB_TOKEN_2"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict)
         return user_repos
     else:
-        return None
+        return []
     
 @st.cache_data(show_spinner=False)
 def get_contributors(user_name,repo_name):
+    # print(user_name, repo_name)
     user_repos = []
     html_repos = []
     
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/contributors'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_3"], st.secrets["GITHUB_TOKEN_3"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict['login'])
             html_repos.append(tmp_dict['html_url'])
         return user_repos, html_repos
     else:
-        return None
+        return [], []
 
-    
-@st.cache_data(show_spinner=False)
-def get_forks(user_name,repo_name):
-    url = f'https://api.github.com/repos/{user_name}/{repo_name}/forks'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
-    cnt = 0
-    if response.status_code == 200:
-        for _ in response.json():
-            cnt += 1
-        return cnt
-    else:
-        return None
-    
-@st.cache_data(show_spinner=False)
-def get_stars(user_name,repo_name):
-    url = f'https://api.github.com/repos/{user_name}/{repo_name}/stargazers'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
-    if response.status_code == 200:
-        cnt = len(response.json())
-        return cnt
-    else:
-        return None
     
 @st.cache_data()
 def get_followers(user_name):
@@ -201,38 +205,24 @@ def get_followers(user_name):
     html_repos = []
     
     url = f'https://api.github.com/users/{user_name}/followers'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict['login'])
             html_repos.append(tmp_dict['html_url'])
         return user_repos, html_repos
     else:
-        return None
+        return [], []
     
 @st.cache_data(show_spinner=False)
 def get_commits(user_name,repo_name):
     user_repos = []
     
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/commits'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_2"], st.secrets["GITHUB_TOKEN_2"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict)
         return user_repos
     else:
-        return None
-    
-
-@st.cache_data()
-def get_url_list(user_name):
-    url_repos = []
-    
-    url = f'https://api.github.com/users/{user_name}/repos'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"]))
-    if response.status_code == 200:
-        for tmp_dict in response.json():
-            url_repos.append(tmp_dict['html_url'])
-        return url_repos
-    else:
-        return None
+        return []

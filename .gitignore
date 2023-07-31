@@ -164,3 +164,4 @@ cython_debug/
 data
 not_used/*
 config.json
+pages/test_page.py

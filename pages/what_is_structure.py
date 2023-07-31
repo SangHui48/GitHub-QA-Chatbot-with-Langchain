@@ -8,11 +8,10 @@ from anytree import RenderTree
 from streamlit_agraph import agraph, Node, Edge, Config
 from streamlit_agraph.config import Config
 from githubqa.get_info_from_api import (
-    github_api_call, get_repo_list, 
-    get_avatar_info, get_github_content
+    github_api_call, get_repo_list, get_avatar_info
 )
 
-st.set_page_config(layout="wide", page_title="What's the Structure")
+st.set_page_config(layout="wide", page_title="What's the Structure?")
 
 initialize_session()
 buy_me_tea()
@@ -112,43 +111,15 @@ def get_markdown_language_form(file_name):
     else:
         return None
     
-#
 
 nodes, edges = [], []
 
-def print_directory_structure(user, repo, path='', depth=0):
-    contents = get_github_content(user, repo, path)
-
-    # GitHub API 제한 핸들링
-    try:
-        if contents["message"].startswith("API rate limit exceeded for"):
-            print("ERROR: API rate limit exceeded!")
-            st.write("ERROR: API rate limit exceeded!")
-    except:
-        pass # 핸들링 안하는 중. 에러 메세지 그대로 출력.
-
-    for item in contents:
-        if item['type'] == 'dir':
-            print_directory_structure(user, repo, item['path'], depth+1)
-        else:
-            if st.button(item['path']):
-                print_content(item['_links']['self'], get_markdown_language_form(item['path']))
-    
-def print_content(url, file_type):
-    response = requests.get(url,  auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_TOKEN"])).json()
-    try:
-        content = base64.b64decode(response['content']).decode('utf-8')
-        with col2:
-            st.code(content, language=file_type, line_numbers=True)
-    except:
-        st.code("Cannot read this file_content", language="markdown", line_numbers=True)
-    
 
 def load_graph_data(github_link):
     global file_image_dict, nodes, edges
     
     nodes, edges = [], [] 
-    _, _ ,root = github_api_call(github_link)
+    _, _ ,root,_ = github_api_call(github_link)
 
     for _, _, tmp_node in RenderTree(root):
         file_path = tmp_node.name
@@ -201,18 +172,18 @@ def load_graph_data(github_link):
 
 
 st.session_state["user_name"] = st.sidebar.text_input(
-    'GitHub User:',  key="github_user_input_sturcture", 
+    'GitHub Username:',  key="github_user_input_sturcture", 
     value=st.session_state["user_name"],
     on_change=handling_user_change
     )
 if st.session_state["user_name"]:
     user_name = st.session_state["user_name"]
-    repo_list = get_repo_list(user_name)
+    repo_list = get_repo_list(user_name)[0]
     user_info = get_avatar_info(user_name)
     if repo_list:
         repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
         st.session_state["repo_name"] = st.sidebar.selectbox(
-                f"Select {user_name}'s repository", repo_list, 
+                f"Select {user_name}'s repository:", repo_list, 
                 key="repo_select_graph_visualize",
                 index=repo_list.index(st.session_state["repo_name"]),
             )
@@ -223,7 +194,7 @@ if st.session_state["user_name"]:
         image = Image.open(BytesIO(image_response.content)).resize((250,250))
         st.sidebar.image(image, use_column_width='always', caption=f"{user_name}'s profile")
     else:
-        st.error("Invalid user ID")
+        st.error("Invalid username")
 
 
 if st.session_state['repo_url']:
@@ -233,7 +204,7 @@ if st.session_state['repo_url']:
     nodes, edges = [], [] 
     nodes, edges = load_graph_data(st.session_state['repo_url'])
 
-    radiobutton_config = st.radio(
+    radiobutton_config = st.sidebar.radio(
                             "Layout",
                             ('Physics', 'Hierarchical'),
                         )
@@ -256,7 +227,7 @@ if st.session_state['repo_url']:
     user, repo = st.session_state['repo_url'].split('/')[-2:]
     with col2:
         # key : file_path , value : content 
-        total_repo_file_info_dict, _ ,_ = github_api_call(st.session_state['repo_url'])
+        total_repo_file_info_dict, _ ,_,_ = github_api_call(st.session_state['repo_url'])
         repo_list = [DEFAULT_SELECT_VALUE]  + list(total_repo_file_info_dict.keys())
         file_name = st.selectbox(
                 f"Select {repo}'s filename",
@@ -269,17 +240,7 @@ if st.session_state['repo_url']:
                 line_numbers=True
             )
         else:
-            st.info("select your file_name")
-        # print_directory_structure(user, repo)
+            pass # 공백.
+            # st.info("select your file_name")
 else:
-    st.info('Please insert your name and repo_name')
-
-# 1. Build the config (with sidebar to play with options) .
-# config_builder = ConfigBuilder(nodes)
-# config = config_builder.build()
-
-# 2. If your done, save the config to a file.
-# config.save("config.json")
-
-# 3. Simple reload from json file (you can bump the builder at this point.)
-# config = Config(from_json="config.json")
+    st.info('Please input **Username** and **name of the repository**.')
