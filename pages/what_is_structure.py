@@ -25,6 +25,7 @@ buy_me_tea()
 # 일일이 추가 중. 정렬 아직 안함.
 # 자동화하려면, 파일 확장자명과 위 링크 목록과 매칭 해야함. -> 조사 필요
 file_image_dict = {
+#   "확장자명" : "https://github.com/PKief/vscode-material-icon-theme/blob/main/icons/{이_부분}.svg"
     "py" : "python",
     "pdf" : "pdf",
     "txt" : "text",
@@ -42,6 +43,7 @@ file_image_dict = {
     "md" : "markdown",
     "txt" : "document",
     "apk" : "android",
+    "js" : "javascript"
 }
 
 def get_file_icon_url(file_extension):
@@ -105,8 +107,8 @@ file_type_dictionary = {
 def get_markdown_language_form(file_name):
     extension_name = file_name.split(".")[-1]
     extension_name = extension_name.lower()
-    if extension_name in file_image_dict:
-        return file_image_dict[extension_name]
+    if extension_name in file_type_dictionary:
+        return file_type_dictionary[extension_name]
     else:
         return None
     
