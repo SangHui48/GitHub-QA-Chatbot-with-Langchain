@@ -4,12 +4,10 @@ from common import *
 from PIL import Image
 from io import BytesIO
 import streamlit as st
-from anytree import RenderTree 
+from anytree import RenderTree
 from streamlit_agraph import agraph, Node, Edge, Config
 from streamlit_agraph.config import Config
-from githubqa.get_info_from_api import (
-    github_api_call, get_repo_list, get_avatar_info
-)
+from githubqa.get_info_from_api import github_api_call, get_repo_list, get_avatar_info
 
 st.set_page_config(layout="wide", page_title="What's the Structure?")
 
@@ -24,16 +22,16 @@ buy_me_tea()
 # 일일이 추가 중. 정렬 아직 안함.
 # 자동화하려면, 파일 확장자명과 위 링크 목록과 매칭 해야함. -> 조사 필요
 file_image_dict = {
-#   "확장자명" : "https://github.com/PKief/vscode-material-icon-theme/blob/main/icons/{이_부분}.svg"
-#   root는 따로 핸들.
-    "py" : "python", "pdf" : "pdf", "txt" : "text", 
-    "dir" : "folder-resource", "file" : "lib",
-    "ipynb": "python-misc", "exe" : "exe", "jpg" : "image",
-    "jpeg" : "image", "png" : "image", "mp4" : "video", "webm":"video",
-    "zip" : "zip", "txt" : "text", "md" : "markdown",
-    "txt" : "document", "apk" : "android", "js" : "javascript",
-    "json" : "json", "css" : "css", "html" : "html",
-    "babelrc":"babel",  "scss":"sass", "webp" : "image",
+    # "확장자명": "https://github.com/PKief/vscode-material-icon-theme/blob/main/icons/{이_부분}.svg"
+    # "root" (별도): "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+    "py":"python", "pdf":"pdf", "txt":"text", 
+    "dir":"folder-resource", "file":"lib",
+    "ipynb":"python-misc", "exe":"exe", "jpg":"image",
+    "jpeg":"image", "png":"image", "mp4":"video", "webm":"video",
+    "zip":"zip", "txt":"text", "md":"markdown",
+    "txt":"document", "apk":"android", "js":"javascript",
+    "json":"json", "css":"css", "html":"html",
+    "babelrc":"babel", "scss":"sass", "webp":"image",
     "gitignore":"git", "gitmodules":"git",
 }
 
@@ -47,23 +45,23 @@ folder_image_set = set([
 # https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_LANGUAGES_PRISM.MD
 # 일일이 추가 중. 정렬 함.
 # 자동화하려면, 파일 확장자명과 위 링크 목록과 아래 링크 매칭 해야함.
-# -> https://github.com/jincheng9/markdown_supported_languages (최선의 링크인가)
+# -> https://github.com/jincheng9/markdown_supported_languages
 
 file_type_dictionary = {
-    "sh" : "bash", "ksh" : "bash", "bash" : "bash", "c" : "c", 
-    "h" : "c", "cmake" : "cmake", "sh-session" : "console",
-    "cpp" : "cpp", "c++" : "cpp", "cc" : "cpp", 
-    "css" : "css", "diff" : "diff", "f" : "fortran",
-    "go" : "go", "hs" : "haskell", "html" : "html",
-    "htm" : "html", "ini" : "ini", "cfg" : "ini",
-    "jade" : "jade", "java" : "java", "js" : "js",
-    "jsp" : "jsp", "lua" : "lua", "mak" : "make",
-    "md" : "markdown", "m" : "objectivec", "pl" : "perl",
-    "pm" : "perl", "php" : "php", "py" : "python",
-    "R" : "r", "scala" : "scala", "sql" : "sql",
-    "sqlite3-console" : "sqlite3", "txt" : "text",
-    "vim" : "vim", "vimrc" : "vim", "xml" : "xml",
-    "xsl" : "xsl", "yaml" : "yaml", "yml" : "yaml",
+    "sh":"bash", "ksh":"bash", "bash":"bash", "c":"c", 
+    "h":"c", "cmake":"cmake", "sh-session":"console",
+    "cpp":"cpp", "c++":"cpp", "cc":"cpp", 
+    "css":"css", "diff":"diff", "f":"fortran",
+    "go":"go", "hs":"haskell", "html":"html",
+    "htm":"html", "ini":"ini", "cfg":"ini",
+    "jade":"jade", "java":"java", "js":"js",
+    "jsp":"jsp", "lua":"lua", "mak":"make",
+    "md":"markdown", "m":"objectivec", "pl":"perl",
+    "pm":"perl", "php":"php", "py":"python",
+    "R":"r", "scala":"scala", "sql":"sql",
+    "sqlite3-console":"sqlite3", "txt":"text",
+    "vim":"vim", "vimrc":"vim", "xml":"xml",
+    "xsl":"xsl", "yaml":"yaml", "yml":"yaml",
 }
 
 def get_file_icon_url(file_extension):
@@ -73,6 +71,7 @@ def get_file_icon_url(file_extension):
     else:
         return ""
 
+
 def get_markdown_language_form(file_name):
     extension_name = file_name.split(".")[-1]
     extension_name = extension_name.lower()
@@ -81,61 +80,65 @@ def get_markdown_language_form(file_name):
     else:
         return None
 
-      
+
 nodes, edges = [], []
+
 
 def load_graph_data(github_link):
     global file_image_dict, nodes, edges
-    
-    nodes, edges = [], [] 
-    _, _ ,root,_ = github_api_call(github_link)
+
+    nodes, edges = [], []
+    _, _, root, _ = github_api_call(github_link)
 
     for _, _, tmp_node in RenderTree(root):
         file_path = tmp_node.name
-        file_name = tmp_node.name.split('/')[-1]
-        
+        file_name = tmp_node.name.split("/")[-1]
+
         if root.name == tmp_node.name:
             nodes.append(
-                Node(id=file_path,
+                Node(
+                    id=file_path,
                     label=file_name,
                     title=file_name,
                     shape="circularImage",
                     image="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
                     link=github_link,
                     # size=100, # 이런 식으로 수정하면 됨.
-                    color="white", 
-                    )
+                    color="white",
                 )
-        elif "." in file_name or file_name=="LICENSE":  # LICENSE만 수동으로 핸들링. 개선 여지 존재?
+            )
+        elif "." in file_name or file_name == "LICENSE":  # LICENSE만 수동으로 핸들링. 개선 여지 존재?
             if file_name == "LICENSE":
                 extension_name = ""
             else:
                 extension_name = file_name.split(".")[-1]
-            image_link = get_file_icon_url('file')
+            image_link = get_file_icon_url("file")
             if extension_name in file_image_dict:
-                 image_link = get_file_icon_url(extension_name)
-            nodes.append(
-                Node(
-                    id=file_path, label=file_name,
-                    shape="circularImage",
-                    image=image_link, color="white",
-                    )
-                )
-        else:
-            if file_name in folder_image_set:
-                image_link = f"https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/icons/folder-{file_name}.svg"
-            else:
-                image_link = get_file_icon_url('dir')
+                image_link = get_file_icon_url(extension_name)
             nodes.append(
                 Node(
                     id=file_path,
                     label=file_name,
                     shape="circularImage",
                     image=image_link,
-                    color="white"
-                    )
-                )  
-        
+                    color="white",
+                )
+            )
+        else:
+            if file_name in folder_image_set:
+                image_link = f"https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/icons/folder-{file_name}.svg"
+            else:
+                image_link = get_file_icon_url("dir")
+            nodes.append(
+                Node(
+                    id=file_path,
+                    label=file_name,
+                    shape="circularImage",
+                    image=image_link,
+                    color="white",
+                )
+            )
+
         if tmp_node.parent:
             edges.append(
                 Edge(source=tmp_node.parent.name, target=tmp_node.name, label="")
@@ -145,75 +148,86 @@ def load_graph_data(github_link):
 
 
 st.session_state["user_name"] = st.sidebar.text_input(
-    'GitHub Username:',  key="github_user_input_sturcture", 
+    "GitHub Username:",
+    key="github_user_input_sturcture",
     value=st.session_state["user_name"],
-    on_change=handling_user_change
-    )
+    on_change=handling_user_change,
+)
 if st.session_state["user_name"]:
     user_name = st.session_state["user_name"]
     repo_list = get_repo_list(user_name)[0]
     user_info = get_avatar_info(user_name)
     if repo_list:
-        repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
+        repo_list = [DEFAULT_SELECT_VALUE] + repo_list
         st.session_state["repo_name"] = st.sidebar.selectbox(
-                f"Select {user_name}'s repository:", repo_list, 
-                key="repo_select_graph_visualize",
-                index=repo_list.index(st.session_state["repo_name"]),
-            )
+            f"Select {user_name}'s repository:",
+            repo_list,
+            key="repo_select_graph_visualize",
+            index=repo_list.index(st.session_state["repo_name"]),
+        )
         if st.session_state["repo_name"] != DEFAULT_SELECT_VALUE:
-            st.session_state["repo_url"] = f"https://github.com/{st.session_state['user_name']}/{st.session_state['repo_name']}"
-        avatar_url = user_info['avatar_url']
+            st.session_state[
+                "repo_url"
+            ] = f"https://github.com/{st.session_state['user_name']}/{st.session_state['repo_name']}"
+        avatar_url = user_info["avatar_url"]
         image_response = requests.get(avatar_url)
-        image = Image.open(BytesIO(image_response.content)).resize((250,250))
-        st.sidebar.image(image, use_column_width='always', caption=f"{user_name}'s profile")
+        image = Image.open(BytesIO(image_response.content)).resize((250, 250))
+        st.sidebar.image(
+            image, use_column_width="always", caption=f"{user_name}'s profile"
+        )
     else:
         st.error("Invalid username")
 
 
-if st.session_state['repo_url']:
-    st.markdown("<code><h2 style='text-align: center;padding:15px;margin-bottom:10px ;color: #04A930;'>Repo Structure Visualization</h2></code>", 
-        unsafe_allow_html=True)
+if st.session_state["repo_url"]:
+    st.markdown(
+        "<code><h2 style='text-align: center;padding:15px;margin-bottom:10px ;color: #04A930;'>Repo Structure Visualization</h2></code>",
+        unsafe_allow_html=True,
+    )
     col1, col2 = st.columns(2, gap="small")
-    nodes, edges = [], [] 
-    nodes, edges = load_graph_data(st.session_state['repo_url'])
+    nodes, edges = [], []
+    nodes, edges = load_graph_data(st.session_state["repo_url"])
 
     radiobutton_config = st.sidebar.radio(
-                            "Layout",
-                            ('Physics', 'Hierarchical'),
-                        )
-    if radiobutton_config == 'Physics':
+        "Layout",
+        ("Physics", "Hierarchical"),
+    )
+    if radiobutton_config == "Physics":
         config_physics = True
         config_hierarchical = False
     else:
         config_physics = False
         config_hierarchical = True
- 
+
     config = Config(
-                width=col1.width, height=750,
-                directed=True, physics=config_physics, 
-                hierarchical=config_hierarchical, # **kwargs
-            )
+        width=col1.width,
+        height=750,
+        directed=True,
+        physics=config_physics,
+        hierarchical=config_hierarchical,  # **kwargs
+    )
 
     with col1:
         agraph(nodes=nodes, edges=edges, config=config)
-    
-    user, repo = st.session_state['repo_url'].split('/')[-2:]
+
+    user, repo = st.session_state["repo_url"].split("/")[-2:]
     with col2:
-        # key : file_path , value : content 
-        total_repo_file_info_dict, _ ,_,_ = github_api_call(st.session_state['repo_url'])
-        repo_list = [DEFAULT_SELECT_VALUE]  + list(total_repo_file_info_dict.keys())
+        # key : file_path , value : content
+        total_repo_file_info_dict, _, _, _ = github_api_call(
+            st.session_state["repo_url"]
+        )
+        repo_list = [DEFAULT_SELECT_VALUE] + list(total_repo_file_info_dict.keys())
         file_name = st.selectbox(
-                f"Select {repo}'s filename",
-                repo_list, key="what_is_structure_repo_name"
+            f"Select {repo}'s filename", repo_list, key="what_is_structure_repo_name"
         )
         if file_name != DEFAULT_SELECT_VALUE:
             st.code(
                 total_repo_file_info_dict[file_name],
                 language=get_markdown_language_form(file_name),
-                line_numbers=True
+                line_numbers=True,
             )
         else:
-            pass # 공백.
+            pass  # 공백.
             # st.info("select your file_name")
 else:
-    st.info('Please input **Username** and **name of the repository**.')
+    st.info("Please input **Username** and **name of the repository**.")
