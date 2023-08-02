@@ -4,12 +4,11 @@ from common import *
 from PIL import Image
 from io import BytesIO
 import streamlit as st
-from githubqa.vector_db import *
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from githubqa.data_processing import dictionary_to_docs, create_retriever
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
+from githubqa.data_processing import dictionary_to_docs, create_retriever
 from githubqa.get_info_from_api import get_avatar_info, get_repo_list, github_api_call
 
 # 1. Session Initialize & Donation
