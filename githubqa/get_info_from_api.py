@@ -5,6 +5,7 @@ import requests
 import streamlit as st
 from anytree import Node, RenderTree
 from langchain.document_loaders import PyPDFLoader
+from bs4 import BeautifulSoup
 
 
 API_CALL_COUNT = 0
@@ -71,7 +72,6 @@ def api_call(api_link):
 
 
 def get_dir_info(api_link, path_name, parent_node ):
-    # print(api_link, path_name, parent_node)
     file_info_list = api_call(api_link)
     for file_info in file_info_list:
         will_pass = False
@@ -144,7 +144,6 @@ def github_api_call(web_link):
         file_name = node.name.split("/")[-1]
         tree_structure += f"{pre}{file_name}\n"
         
-    # print(tree_structure)
     structure_content = f'''
     {user_name} 's github link is {repo_name} and the {repo_name}'s github folder structure is like that.
     
@@ -155,6 +154,14 @@ def github_api_call(web_link):
     email = get_avatar_info(user_name)['email']
     followers = get_followers(user_name)
     repo_list = [repo for repo in repo_list]
+    git_stats = get_git_stats(user_name)
+    git_language = get_used_language(user_name)
+    lang_cnt = len(git_language)//2
+
+    used_languages = ""
+    for l in range(1,lang_cnt+1):
+        if l==lang_cnt: used_languages += f"{git_language[l]} {git_language[l+1]}"
+        else: used_languages += f"{git_language[l]} {git_language[l+1]}, "
 
     user_content = f'''
     {user_name}’s email is {email}.
@@ -163,6 +170,11 @@ def github_api_call(web_link):
 
     {user_name}’s other repositories have {repo_list}.
     If you want to know about other repository content, change your repository selection.
+
+    {git_stats[2]} is Level {git_stats[3].strip()} and has recieved a total of {git_stats[5]} stars.
+    In this year, {user_name} commits {git_stats[7]} times and makes {git_stats[9]} PR.
+
+    {git_language[0]} is {used_languages}.
     '''
     return TOTAL_INFO_DICT, structure_content, ROOT, user_content
 
@@ -182,7 +194,6 @@ def get_language_list(user_name,repo_name):
     
 @st.cache_data(show_spinner=False)
 def get_contributors(user_name,repo_name):
-    # print(user_name, repo_name)
     user_repos = []
     html_repos = []
     
@@ -224,3 +235,28 @@ def get_commits(user_name,repo_name):
         return user_repos
     else:
         return []
+      
+
+@st.cache_data(show_spinner=False)
+def get_git_stats(user_name):
+    url = f'https://github-readme-stats.vercel.app/api?username={user_name}'
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_3"], st.secrets["GITHUB_TOKEN_3"]))
+    
+    if response.status_code == 200:
+        cleantext = BeautifulSoup(response.text, "lxml").text.strip().split('\n')
+        git_stats = [line for line in cleantext if line.strip()]
+        return git_stats
+    else:
+        return None
+    
+@st.cache_data(show_spinner=False)
+def get_used_language(user_name):
+    url = f'https://github-readme-stats.vercel.app/api/top-langs/?username={user_name}'
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_3"], st.secrets["GITHUB_TOKEN_3"]))
+    
+    if response.status_code == 200:
+        cleantext = BeautifulSoup(response.text, "lxml").text.strip().split('\n')
+        git_language = [line for line in cleantext if line.strip()]
+        return git_language
+    else:
+        return None

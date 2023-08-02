@@ -18,7 +18,7 @@ buy_me_tea()
 # 2. Sidebar username input
 st.sidebar.title('`Gitter`:feather:')
 st.session_state["user_name"] = st.sidebar.text_input(
-    'GitHub User:',  key="github_user_input", 
+    'GitHub Username:', key="github_user_input", placeholder="input GitHub username",
     value=st.session_state["user_name"],
     on_change=handling_user_change
     )
@@ -42,19 +42,19 @@ if st.session_state["user_name"]:
         image = Image.open(BytesIO(image_response.content)).resize((250,250))
         st.sidebar.image(image, use_column_width='always', caption=f"{user_name}'s profile")
     else:
-        st.error("Invalid user ID")
-st.sidebar.info('Made with  by [오미자차](https://github.com/SangHui48/KDT_AI_B3)')
+        st.error("Invalid username.")
+st.sidebar.info('Made by [오미자차](https://github.com/SangHui48/KDT_AI_B3)')
 
 
 # 4. Main Screen Start 
 st.header("`Chatbot`")
 if st.session_state['repo_url']:
-    with st.spinner('Analyzing Repository...'):
+    with st.spinner('Analyzing the repository...'):
         # Return Value : "File_name" : "File_content"
         github_info_dict, structure_content, _, user_content = github_api_call(st.session_state['repo_url'])
         
     # Return Values [Doc1, Doc2 ...]
-    with st.spinner('Embedding to VectorSpace...'):
+    with st.spinner('Embedding to Vectorspace...'):
         docs = dictionary_to_docs(
             github_info_dict, structure_content, user_content,
             chunking_size=1000, overlap_size=0, 
@@ -94,11 +94,11 @@ if st.session_state['repo_url']:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    if prompt := st.chat_input("Ask questions about the GitHub repository!"):
+    if prompt := st.chat_input("Ask me about the repository!"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
-        with st.spinner('Generating answers...'):
+        with st.spinner('Generating an answer...'):
             with st.chat_message("assistant"):
                 message_placeholder = st.empty()
                 full_response = ""
@@ -110,12 +110,9 @@ if st.session_state['repo_url']:
                 message_placeholder.markdown(full_response)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
 else:
-    st.info('Hit your **GITHUB NAME** and **REPO** to the left side bar.')
     st.info("""
-            I am an analysis tool for question-answering built on LangChain.\n
-            Given GitHub informations, I will analyze the repository using LangChain and store it in vectorDB.
-            And I will answer questions about GitHub through openAI.\n
-            For example, I respond to information about the structure of the git repository, what it does, and what functions are in.\n
-            Here is the video of example. 
+            Please input **GitHub Username** and **Repository Name** in the left sidebar.\n
+            And I will answer questions for you about that repository!\n
+            *Powered by Langchain & OpenAI & Pinecone.*
             """)
     st.video("video/GITTER_DEMO.webm", format="video/webm")
