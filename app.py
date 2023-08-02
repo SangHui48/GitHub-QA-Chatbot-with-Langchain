@@ -19,7 +19,7 @@ buy_me_tea()
 # 2. Sidebar username input
 st.sidebar.title('`Gitter`:feather:')
 st.session_state["user_name"] = st.sidebar.text_input(
-    'GitHub Username:', key="github_user_input", #placeholder=""
+    'GitHub Username:', key="github_user_input", placeholder="input GitHub username",
     value=st.session_state["user_name"],
     on_change=handling_user_change
     )
@@ -111,13 +111,9 @@ if st.session_state['repo_url']:
                 message_placeholder.markdown(full_response)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
 else:
-    st.info('Input **GitHub Username** and **Repository Name** in the left sidebar.')
-    # TODO JSM
     st.info("""
-            I am an analysis tool for question-answering built on LangChain.\n
-            Given GitHub informations, I will analyze the repository using LangChain and store it in vectorDB.
-            And I will answer questions about GitHub through openAI.\n
-            For example, I respond to information about the structure of the git repository, what it does, and what functions are in.\n
-            Here is the video of example. 
+            Please input **GitHub Username** and **Repository Name** in the left sidebar.\n
+            And I will answer questions for you about that repository!\n
+            *Powered by Langchain & OpenAI & Pinecone.*
             """)
     st.video("video/GITTER_DEMO.webm", format="video/webm")
