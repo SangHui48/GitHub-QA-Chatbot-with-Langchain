@@ -16,8 +16,8 @@ ROOT = None
 @st.cache_data(show_spinner=False)
 def get_avatar_info(user_name):
     # name : 닉네임 , public_repos , avatar_url
-    url = f'https://api.github.com/users/{user_name}'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
+    url = f'http://127.0.0.1:8000/api/github/avatar/{user_name}'
+    response = requests.get(url)
     
     if response.status_code == 200:
         return response.json()
@@ -26,31 +26,13 @@ def get_avatar_info(user_name):
     
 @st.cache_data(show_spinner=False)
 def get_repo_list(user_name):
-    user_repos = []
-    html_repos = []
-    star_repos = []
-    fork_repos = []
+    url = f'http://127.0.0.1:8000/api/github/repoList/{user_name}'
+    response = requests.get(url)
     
-    user_info =  get_avatar_info(user_name)
-    if user_info:
-        total_repo_cnt = user_info['public_repos']
-        total_page_cnt = (total_repo_cnt // 30) + 1 
+    if response.status_code == 200:
+        return response.json().get("user_repos"), response.json().get("html_repos"), response.json().get("star_repos"), response.json().get("fork_repos")
     else:
-        return None
-    
-    
-    for page_num in range(1, total_page_cnt+1):
-        url = f'https://api.github.com/users/{user_name}/repos?page={page_num}'
-        response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
-        if response.status_code == 200:
-            for tmp_dict in response.json():
-                user_repos.append(tmp_dict['name'])
-                html_repos.append(tmp_dict['html_url'])
-                star_repos.append(tmp_dict['stargazers_count'])
-                fork_repos.append(tmp_dict['forks_count'])
-            else:
-                continue
-    return user_repos, html_repos, star_repos, fork_repos
+        return None 
 
 
 def api_call(api_link):
