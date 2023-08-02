@@ -25,14 +25,16 @@ buy_me_tea()
 # 자동화하려면, 파일 확장자명과 위 링크 목록과 매칭 해야함. -> 조사 필요
 file_image_dict = {
 #   "확장자명" : "https://github.com/PKief/vscode-material-icon-theme/blob/main/icons/{이_부분}.svg"
+#   root는 따로 핸들.
     "py" : "python", "pdf" : "pdf", "txt" : "text", 
-    "dir" : "folder-resource", "file" : "lib", "root" : "git",
+    "dir" : "folder-resource", "file" : "lib",
     "ipynb": "python-misc", "exe" : "exe", "jpg" : "image",
     "jpeg" : "image", "png" : "image", "mp4" : "video", "webm":"video",
     "zip" : "zip", "txt" : "text", "md" : "markdown",
     "txt" : "document", "apk" : "android", "js" : "javascript",
     "json" : "json", "css" : "css", "html" : "html",
-    "babelrc":"babel",  "scss":"sass", "webp" : "image"
+    "babelrc":"babel",  "scss":"sass", "webp" : "image",
+    "gitignore":"git", "gitmodules":"git",
 }
 
 folder_image_set = set([
@@ -98,7 +100,7 @@ def load_graph_data(github_link):
                     label=file_name,
                     title=file_name,
                     shape="circularImage",
-                    image=get_file_icon_url('root'),
+                    image="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
                     link=github_link,
                     # size=100, # 이런 식으로 수정하면 됨.
                     color="white", 
