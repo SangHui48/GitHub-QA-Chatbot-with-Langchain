@@ -20,7 +20,7 @@ df = df.to_html(escape=False)
 st.sidebar.write(df, unsafe_allow_html=True)
 
 
-tab1, tab2 = st.tabs(["Korean", "English"])
+tab1, tab2 = st.tabs(["KOREAN", "ENGLISH"])
 
 with tab1:
     st.markdown("# 깃-털(Gitter) : “깃헙을 털다.” 🧨\n")
