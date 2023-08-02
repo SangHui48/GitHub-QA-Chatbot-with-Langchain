@@ -5,6 +5,7 @@ import requests
 import streamlit as st
 from anytree import Node, RenderTree
 from langchain.document_loaders import PyPDFLoader
+from bs4 import BeautifulSoup
 
 
 API_CALL_COUNT = 0
@@ -12,34 +13,44 @@ TOTAL_INFO_DICT = {}
 ROOT = None
 
 
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def get_avatar_info(user_name):
     # name : 닉네임 , public_repos , avatar_url
     url = f'https://api.github.com/users/{user_name}'
     response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
-    return response.json()
-
     
-@st.cache_data()
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None 
+    
+@st.cache_data(show_spinner=False)
 def get_repo_list(user_name):
     user_repos = []
     html_repos = []
     star_repos = []
     fork_repos = []
-    test = []
     
-    url = f'https://api.github.com/users/{user_name}/repos'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
-    if response.status_code == 200:
-        for tmp_dict in response.json():
-            user_repos.append(tmp_dict['name'])
-            html_repos.append(tmp_dict['html_url'])
-            star_repos.append(tmp_dict['stargazers_count'])
-            fork_repos.append(tmp_dict['forks_count'])
-            test.append(tmp_dict['language'])
-        return user_repos, html_repos, star_repos, fork_repos,test
+    user_info =  get_avatar_info(user_name)
+    if user_info:
+        total_repo_cnt = user_info['public_repos']
+        total_page_cnt = (total_repo_cnt // 30) + 1 
     else:
         return None
+    
+    
+    for page_num in range(1, total_page_cnt+1):
+        url = f'https://api.github.com/users/{user_name}/repos?page={page_num}'
+        response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
+        if response.status_code == 200:
+            for tmp_dict in response.json():
+                user_repos.append(tmp_dict['name'])
+                html_repos.append(tmp_dict['html_url'])
+                star_repos.append(tmp_dict['stargazers_count'])
+                fork_repos.append(tmp_dict['forks_count'])
+            else:
+                continue
+    return user_repos, html_repos, star_repos, fork_repos
 
 
 def api_call(api_link):
@@ -61,7 +72,6 @@ def api_call(api_link):
 
 
 def get_dir_info(api_link, path_name, parent_node ):
-    # print(api_link, path_name, parent_node)
     file_info_list = api_call(api_link)
     for file_info in file_info_list:
         will_pass = False
@@ -106,7 +116,7 @@ def get_dir_info(api_link, path_name, parent_node ):
             get_dir_info(file_api_link, next_path_name, dir_node)
 
 
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def github_api_call(web_link):
     global ROOT,API_CALL_COUNT,TOTAL_INFO_DICT
 
@@ -134,7 +144,6 @@ def github_api_call(web_link):
         file_name = node.name.split("/")[-1]
         tree_structure += f"{pre}{file_name}\n"
         
-    # print(tree_structure)
     structure_content = f'''
     {user_name} 's github link is {repo_name} and the {repo_name}'s github folder structure is like that.
     
@@ -145,28 +154,29 @@ def github_api_call(web_link):
     email = get_avatar_info(user_name)['email']
     followers = get_followers(user_name)
     repo_list = [repo for repo in repo_list]
-    repo_structure = ""
-    for pre, _, node in RenderTree(ROOT):
-        file_name = node.name.split("/")[-1]
-        repo_structure += f"{pre}{repo_list}\n"
+    git_stats = get_git_stats(user_name)
+    git_language = get_used_language(user_name)
+    lang_cnt = len(git_language)//2
+
+    used_languages = ""
+    for l in range(1,lang_cnt+1):
+        if l==lang_cnt: used_languages += f"{git_language[l]} {git_language[l+1]}"
+        else: used_languages += f"{git_language[l]} {git_language[l+1]}, "
 
     user_content = f'''
     {user_name}’s email is {email}.
 
     {user_name}’s followers are {followers}.
 
-    {user_name}’s other repositories have {repo_structure}.
+    {user_name}’s other repositories have {repo_list}.
     If you want to know about other repository content, change your repository selection.
+
+    {git_stats[2]} is Level {git_stats[3].strip()} and has recieved a total of {git_stats[5]} stars.
+    In this year, {user_name} commits {git_stats[7]} times and makes {git_stats[9]} PR.
+
+    {git_language[0]} is {used_languages}.
     '''
     return TOTAL_INFO_DICT, structure_content, ROOT, user_content
-
-
-@st.cache_data()
-def get_github_content(user, repo, path=''):
-    url = f'https://api.github.com/repos/{user}/{repo}/contents/{path}'
-    response = requests.get(url, auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
-    return response.json()
-
 
 
 @st.cache_data(show_spinner=False)
@@ -180,7 +190,7 @@ def get_language_list(user_name,repo_name):
             user_repos.append(tmp_dict)
         return user_repos
     else:
-        return None
+        return []
     
 @st.cache_data(show_spinner=False)
 def get_contributors(user_name,repo_name):
@@ -195,7 +205,7 @@ def get_contributors(user_name,repo_name):
             html_repos.append(tmp_dict['html_url'])
         return user_repos, html_repos
     else:
-        return None
+        return [], []
 
     
 @st.cache_data()
@@ -204,35 +214,49 @@ def get_followers(user_name):
     html_repos = []
     
     url = f'https://api.github.com/users/{user_name}/followers'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_2"], st.secrets["GITHUB_TOKEN_2"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict['login'])
             html_repos.append(tmp_dict['html_url'])
         return user_repos, html_repos
     else:
-        return None
+        return [], []
     
 @st.cache_data(show_spinner=False)
 def get_commits(user_name,repo_name):
     user_repos = []
     
     url = f'https://api.github.com/repos/{user_name}/{repo_name}/commits'
-    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_1"], st.secrets["GITHUB_TOKEN_1"]))
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_2"], st.secrets["GITHUB_TOKEN_2"]))
     if response.status_code == 200:
         for tmp_dict in response.json():
             user_repos.append(tmp_dict)
         return user_repos
     else:
+        return []
+      
+
+@st.cache_data(show_spinner=False)
+def get_git_stats(user_name):
+    url = f'https://github-readme-stats.vercel.app/api?username={user_name}'
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_3"], st.secrets["GITHUB_TOKEN_3"]))
+    
+    if response.status_code == 200:
+        cleantext = BeautifulSoup(response.text, "lxml").text.strip().split('\n')
+        git_stats = [line for line in cleantext if line.strip()]
+        return git_stats
+    else:
         return None
-
-
-# def check_api_limit():
-#     url = f'https://api.github.com/rate_limit'
-#     # api 리미트 체크용 -> 만일 auth 체크했다면 뺴야함 ..!
-#     # response = requests.get(url,auth=("70cebd76ed1ad35e04e0", "919230fe025d4999b52f4bed63828f8c434d4788"))
-#     return response.json()
-
-
-# if __name__ == "__main__":
-#     print(check_api_limit())
+    
+@st.cache_data(show_spinner=False)
+def get_used_language(user_name):
+    url = f'https://github-readme-stats.vercel.app/api/top-langs/?username={user_name}'
+    response = requests.get(url,auth=(st.secrets["GITHUB_NAME_3"], st.secrets["GITHUB_TOKEN_3"]))
+    
+    if response.status_code == 200:
+        cleantext = BeautifulSoup(response.text, "lxml").text.strip().split('\n')
+        git_language = [line for line in cleantext if line.strip()]
+        return git_language
+    else:
+        return None

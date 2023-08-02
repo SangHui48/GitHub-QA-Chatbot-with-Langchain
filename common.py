@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit.components.v1 import html
 
-DEFAULT_SELECT_VALUE = "Select Repo"
+DEFAULT_SELECT_VALUE = "Select repository"
 MODEL_NAME = "gpt-3.5-turbo-16k"
 
 def initialize_session():
@@ -12,7 +12,7 @@ def initialize_session():
         st.session_state["repo_url"] = ""
         st.session_state["visitied_list"] = []
         st.session_state["messages"] = []
-        st.session_state["oai_key"] = ""
+        st.session_state["chat_memory"] = None
 
 
 def handling_user_change():
