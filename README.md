@@ -88,10 +88,9 @@ response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_
     <td align="center"><a href="https://github.com/HDmoonSir"><img src="https://avatars.githubusercontent.com/SangHui48" width="150px;" alt=""></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/holly-21"><b>wonyoung</b></td>
-    <td align="center"><a href="https://github.com/aza1200"><b>jaehyeong</b></td>
-    <td align="center"><a href="https://github.com/furthermares"><b>sangmin</b></td>
-    <td align="center"><a href="https://github.com/SangHui48"><b>sangHui</b></td>
+    <td align="center"><a href="https://github.com/holly-21"><b>Wonyoung</b></td>
+    <td align="center"><a href="https://github.com/aza1200"><b>Jaehyeong</b></td>
+    <td align="center"><a href="https://github.com/furthermares"><b>Sangmin</b></td>
+    <td align="center"><a href="https://github.com/SangHui48"><b>Sanghui</b></td>
     </tr>
-
 </table>

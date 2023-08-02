@@ -11,7 +11,7 @@ from githubqa.get_info_from_api import (
     github_api_call, get_repo_list, get_avatar_info
 )
 
-st.set_page_config(layout="wide", page_title="What's the Structure")
+st.set_page_config(layout="wide", page_title="What's the Structure?")
 
 initialize_session()
 buy_me_tea()
@@ -24,6 +24,7 @@ buy_me_tea()
 # 일일이 추가 중. 정렬 아직 안함.
 # 자동화하려면, 파일 확장자명과 위 링크 목록과 매칭 해야함. -> 조사 필요
 file_image_dict = {
+#   "확장자명" : "https://github.com/PKief/vscode-material-icon-theme/blob/main/icons/{이_부분}.svg"
     "py" : "python", "pdf" : "pdf", "txt" : "text", 
     "dir" : "folder-resource", "file" : "lib", "root" : "git",
     "ipynb": "python-misc", "exe" : "exe", "jpg" : "image",
@@ -63,16 +64,12 @@ file_type_dictionary = {
     "xsl" : "xsl", "yaml" : "yaml", "yml" : "yaml",
 }
 
-
-
 def get_file_icon_url(file_extension):
     file_extension = file_extension.lower()
     if file_extension in file_image_dict:
         return f"https://raw.githubusercontent.com/PKief/vscode-material-icon-theme/main/icons/{file_image_dict[file_extension]}.svg"
     else:
         return ""
-
-
 
 def get_markdown_language_form(file_name):
     extension_name = file_name.split(".")[-1]
@@ -81,10 +78,9 @@ def get_markdown_language_form(file_name):
         return file_type_dictionary[extension_name]
     else:
         return None
-    
 
+      
 nodes, edges = [], []
-
 
 def load_graph_data(github_link):
     global file_image_dict, nodes, edges
@@ -147,7 +143,7 @@ def load_graph_data(github_link):
 
 
 st.session_state["user_name"] = st.sidebar.text_input(
-    'GitHub User:',  key="github_user_input_sturcture", 
+    'GitHub Username:',  key="github_user_input_sturcture", 
     value=st.session_state["user_name"],
     on_change=handling_user_change
     )
@@ -158,7 +154,7 @@ if st.session_state["user_name"]:
     if repo_list:
         repo_list = [DEFAULT_SELECT_VALUE] + repo_list 
         st.session_state["repo_name"] = st.sidebar.selectbox(
-                f"Select {user_name}'s repository", repo_list, 
+                f"Select {user_name}'s repository:", repo_list, 
                 key="repo_select_graph_visualize",
                 index=repo_list.index(st.session_state["repo_name"]),
             )
@@ -169,7 +165,7 @@ if st.session_state["user_name"]:
         image = Image.open(BytesIO(image_response.content)).resize((250,250))
         st.sidebar.image(image, use_column_width='always', caption=f"{user_name}'s profile")
     else:
-        st.error("Invalid user ID")
+        st.error("Invalid username")
 
 
 if st.session_state['repo_url']:
@@ -215,6 +211,7 @@ if st.session_state['repo_url']:
                 line_numbers=True
             )
         else:
-            st.info("select your file_name")
+            pass # 공백.
+            # st.info("select your file_name")
 else:
-    st.info('Hit your **GITHUB NAME** and **REPO** to the left side bar.')
+    st.info('Please input **Username** and **name of the repository**.')
