@@ -43,7 +43,7 @@ if st.session_state["user_name"]:
         st.sidebar.image(image, use_column_width='always', caption=f"{user_name}'s profile")
     else:
         st.error("Invalid username.")
-st.sidebar.info('Made by [오미자차](https://github.com/SangHui48/KDT_AI_B3)')
+st.sidebar.info('Made by [오미자차](https://github.com/SangHui48/GitHub-QA-Chatbot-with-Langchain)')
 
 
 # 4. Main Screen Start 
