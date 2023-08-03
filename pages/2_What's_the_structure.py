@@ -216,4 +216,4 @@ if st.session_state['repo_url']:
             pass # 공백.
             # st.info("select your file_name")
 else:
-    st.info('Please input **Username** and **name of the repository**.')
+    st.info('Please input **GitHub Username** and **Repository Name** in the left sidebar.')

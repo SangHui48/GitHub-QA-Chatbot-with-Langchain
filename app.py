@@ -16,7 +16,7 @@ initialize_session()
 buy_me_tea()
 
 # 2. Sidebar username input
-st.sidebar.title('`Gitter`:feather:')
+st.sidebar.title('`Git-ter`:feather:')
 st.session_state["user_name"] = st.sidebar.text_input(
     'GitHub Username:', key="github_user_input", placeholder="input GitHub username",
     value=st.session_state["user_name"],
@@ -113,6 +113,6 @@ else:
     st.info("""
             Please input **GitHub Username** and **Repository Name** in the left sidebar.\n
             And I will answer questions for you about that repository!\n
-            *Powered by Langchain & OpenAI & Pinecone.*
+            *Powered by Langchain & OpenAI & FAISS & Streamlit.*
             """)
     st.video("video/GITTER_DEMO.webm", format="video/webm")

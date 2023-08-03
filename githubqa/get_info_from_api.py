@@ -127,8 +127,8 @@ def github_api_call(web_link):
         tree_structure += f"{pre}{file_name}\n"
         
     structure_content = f'''
-    {user_name} 's github link is {repo_name} and the {repo_name}'s github folder structure is like that.
-    
+    {repo_name} is a Git repository made by {user_name}.
+    This is the structure of {repo_name}.
     {tree_structure}
     '''
 
@@ -145,12 +145,11 @@ def github_api_call(web_link):
         if l==lang_cnt: used_languages += f"{git_language[l]} {git_language[l+1]}"
         else: used_languages += f"{git_language[l]} {git_language[l+1]}, "
 
+    
     user_content = f'''
-    {user_name}’s email is {email}.
-
-    {user_name}’s followers are {followers}.
-
-    {user_name}’s other repositories have {repo_list}.
+    {user_name}'s email is {email}.
+    {user_name}'s followers are {followers}.
+    {user_name}'s other repositories have {repo_list}.
     If you want to know about other repository content, change your repository selection.
 
     {git_stats[2]} is Level {git_stats[3].strip()} and has recieved a total of {git_stats[5]} stars.
