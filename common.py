@@ -4,6 +4,7 @@ from streamlit.components.v1 import html
 DEFAULT_SELECT_VALUE = "Select repository"
 MODEL_NAME = "gpt-3.5-turbo-16k"
 
+
 def initialize_session():
     if not "initialized" in st.session_state:
         st.session_state["initialized"] = True
@@ -24,7 +25,7 @@ def buy_me_tea():
     button = """
     <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="omijatea" data-color="#FFDD00" data-emoji="🍵"  data-font="Cookie" data-text="Buy me a tea" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
     """
-    
+
     html(button, height=70, width=220)
 
     st.markdown(
