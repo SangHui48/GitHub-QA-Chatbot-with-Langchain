@@ -21,7 +21,7 @@ Git-ter is not just a chit-chat chatbot, provides file structure, code analysis,
 <br>
 
 # DEMO Video
-![GITTER_DEMO](https://github.com/SangHui48/GitHub-QA-Chatbot-with-Langchain/assets/48376471/91b98d3d-77e1-4487-aeba-24113f85c4e7)
+![GIT-TER_DEMO](https://github.com/SangHui48/GitHub-QA-Chatbot-with-Langchain/assets/48376471/91b98d3d-77e1-4487-aeba-24113f85c4e7)
 
 
 <br>
@@ -29,7 +29,7 @@ Git-ter is not just a chit-chat chatbot, provides file structure, code analysis,
 # Git-ter Tutorial
 
 ### Use GPT 3.5-turbo-16k for
-GitHub RestAPI, LangChain, FAISS(Vector DB) , Openai, and Streamlit.
+GitHub RestAPI, LangChain, FAISS(Vector DB) , OpenAI, and Streamlit.
 
 ## Development
 

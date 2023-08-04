@@ -131,7 +131,7 @@ else:
         """
         Please input **GitHub Username** and **Repository Name** in the left sidebar.\n
         And I will answer questions for you about that repository!\n
-        *Powered by Langchain & OpenAI & Pinecone.*
+        *Powered by Langchain & OpenAI & FAISS & Streamlit.*
         """
     )
     st.video("video/GITTER_DEMO.webm", format="video/webm")
