@@ -82,10 +82,10 @@ response = requests.get(url,auth=(st.secrets["GITHUB_NAME"], st.secrets["GITHUB_
 ## Contributers
 <table>
  <tr>
-    <td align="center"><a href="https://github.com/rivertw777"><img src="https://avatars.githubusercontent.com/holly-21" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/tmdwo8814"><img src="https://avatars.githubusercontent.com/aza1200" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/huijunam"><img src="https://avatars.githubusercontent.com/furthermares" width="150px;" alt=""></td>
-    <td align="center"><a href="https://github.com/HDmoonSir"><img src="https://avatars.githubusercontent.com/SangHui48" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/holly-21"><img src="https://avatars.githubusercontent.com/holly-21" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/aza1200"><img src="https://avatars.githubusercontent.com/aza1200" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/furthermares"><img src="https://avatars.githubusercontent.com/furthermares" width="150px;" alt=""></td>
+    <td align="center"><a href="https://github.com/SangHui48"><img src="https://avatars.githubusercontent.com/SangHui48" width="150px;" alt=""></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/holly-21"><b>Wonyoung</b></td>
